@@ -1,0 +1,2241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SPbinder — None Leadsheets</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1a2b4a;--navy2:#223260;--blue:#2d5fa6;--blue-btn:#1e7fd4;--blue-lt:#e8f1fb;
+  --teal:#0e8c6e;--teal-lt:#e2f4ef;--amber:#c67d00;--amber-lt:#fff3dc;
+  --red:#c0392b;--red-lt:#fcecea;--green:#1a7a45;--green-lt:#eaf5ee;
+  --purple:#6b3fa0;--purple-lt:#f3eafd;
+  --g0:#f5f6f8;--g1:#ebebeb;--g2:#d0d2d8;--g3:#9499a8;--g4:#555c70;
+  --txt:#1c1f2a;--txt2:#4a4f60;--bdr:#d0d2d8;
+}
+
+/* ── PAGE STRUCTURE ── */
+body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;color:var(--txt);background:#e8ecf2;height:100vh;overflow:hidden;display:flex;flex-direction:column}
+.app-body{flex:1;display:flex;overflow:hidden;min-height:0;position:relative}
+.statusbar{height:20px;background:#e0e4ec;border-top:1px solid var(--bdr);display:flex;align-items:center;padding:0 10px;font-size:11px;color:var(--txt2);justify-content:space-between;flex-shrink:0}
+
+/* ── TOP BARS ── */
+.title-bar{height:24px;background:var(--navy);color:#a8c2e0;display:flex;align-items:center;padding:0 10px;font-size:11px;gap:5px;flex-shrink:0}
+.title-bar b{color:#fff}
+.menu-bar{height:24px;background:#e2e6ee;border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 4px;gap:2px;flex-shrink:0}
+.mi{height:20px;padding:0 8px;display:flex;align-items:center;font-size:12px;cursor:pointer;border-radius:3px;white-space:nowrap}
+.mi:hover{background:var(--blue-lt)}
+.mi.recon-mi{font-weight:700;border-radius:3px;padding:0 9px;gap:5px}
+.mi.recon-mi.enabled{background:var(--navy);color:#fff}
+.mi.recon-mi.enabled:hover{background:var(--navy2)}
+.mi.recon-mi.disabled{background:var(--g1);color:var(--g3);cursor:not-allowed;pointer-events:none}
+.mi.recon-mi .bdg{background:#e05c4a;color:#fff;border-radius:8px;font-size:9px;padding:1px 5px;font-weight:700}
+.toolbar{height:34px;background:#f2f4f8;border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 6px;gap:3px;flex-shrink:0}
+.tb{height:26px;padding:0 8px;border:1px solid transparent;background:transparent;border-radius:3px;cursor:pointer;display:flex;align-items:center;gap:4px;font-size:11px;color:var(--txt2);white-space:nowrap}
+.tb:hover{background:#fff;border-color:var(--bdr)}
+.tb.export-btn{background:var(--blue-btn);color:#fff;border-color:var(--blue-btn);font-weight:700}
+.tb.export-btn:hover{background:#1668b5}
+.tb.binder-close{background:var(--red-lt);border-color:#e0a0a0;color:var(--red)}
+.tb.binder-close:hover{background:#fce8e6;border-color:var(--red)}
+.tb.binder-open{background:var(--green-lt);border-color:#a0d0a8;color:var(--green)}
+.tb.binder-open:hover{background:#d8f0dc;border-color:var(--green)}
+.tbsep{width:1px;height:20px;background:var(--bdr);margin:0 2px}
+.scenario-bar{height:29px;background:#1a2b4a;border-bottom:2px solid #ffc857;display:flex;align-items:center;padding:0 10px;gap:5px;flex-shrink:0;overflow-x:auto}
+.scenario-bar label{color:#a8c2e0;font-size:10px;font-weight:700;letter-spacing:.5px;white-space:nowrap;margin-right:4px}
+.sc-btn{height:20px;padding:0 9px;border:1px solid rgba(255,200,87,.35);background:rgba(255,200,87,.08);color:#ffc857;border-radius:3px;cursor:pointer;font-size:10px;font-weight:700;white-space:nowrap}
+.sc-btn:hover,.sc-btn.active{background:#ffc857;color:#1a2b4a;border-color:#ffc857}
+
+.bm-btn{height:22px;padding:0 10px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#8ba4c8;border-radius:3px;cursor:pointer;font-size:10px;font-weight:700;white-space:nowrap;display:flex;align-items:center;gap:5px}
+.bm-btn:hover{background:rgba(255,255,255,.15);color:#fff}
+.bm-btn.active{background:#fff;color:var(--navy);border-color:#fff}
+.bm-btn i{font-size:12px}
+.bm-hint{font-size:9px;opacity:.7;font-weight:400;margin-left:2px}
+
+/* ── LEFT PANEL ── */
+.lp{width:220px;border-right:1px solid var(--bdr);background:#f7f8fa;display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
+.lp-hdr{background:var(--navy);color:#fff;font-size:11px;font-weight:700;padding:5px 8px;letter-spacing:.3px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.lp-srch{padding:5px 7px;border-bottom:1px solid var(--g1);flex-shrink:0}
+.lp-srch input{width:100%;height:22px;border:1px solid var(--g2);border-radius:3px;padding:0 6px;font-size:11px}
+.tree{flex:1;overflow-y:auto}
+.tri{padding:3px 8px 3px 0;cursor:pointer;display:flex;align-items:center;gap:4px;user-select:none}
+.tri:hover{background:#eef0f5}
+.tri.sel{background:var(--blue-lt)}
+.tri .lbl{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tri i.fol{color:#e6a820}
+.tri i.pdf{color:#c0392b}
+.lptabs{display:flex;border-top:1px solid var(--bdr);flex-shrink:0}
+.lptab{flex:1;text-align:center;padding:5px 2px;font-size:10px;font-weight:700;cursor:pointer;background:#d5dbe8;border-right:1px solid var(--bdr);letter-spacing:.3px}
+.lptab:last-child{border-right:none}
+.lptab.sel{background:#e8ecf2}
+
+/* ── MAIN COLUMN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+
+/* ── DOC VIEWER ── */
+.dv{background:#cdd2db;overflow:hidden;position:relative;flex-shrink:0}
+.dv-tb{height:26px;background:#dde1e9;border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 8px;gap:6px;font-size:11px;color:var(--txt2);flex-shrink:0}
+.dv-tb span{font-size:11px;color:var(--navy);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:340px}
+.dv-inner{position:absolute;left:0;right:0;bottom:0;top:26px;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:10px;gap:8px}
+.resize-handle{height:5px;background:var(--g2);cursor:ns-resize;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr)}
+.resize-handle::after{content:"";width:32px;height:2px;background:var(--g3);border-radius:1px}
+.resize-handle:hover{background:var(--blue-lt)}
+
+/* ── BOTTOM PANEL ── */
+.bp{background:#fff;border-top:2px solid var(--bdr);display:flex;flex-direction:column;overflow:hidden}
+.bp-content{flex:1;overflow:hidden;display:flex;flex-direction:column;order:1;min-height:0}
+.bp-tabs{height:28px;background:#dde1eb;border-bottom:1px solid var(--bdr);display:flex;align-items:flex-end;padding:0 8px;flex-shrink:0;order:2}
+.bpt{height:24px;padding:0 12px;border:1px solid transparent;border-bottom:none;border-radius:4px 4px 0 0;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:4px;background:#c8cedc;color:var(--txt2);margin-right:2px;font-weight:600;letter-spacing:.2px}
+.bpt:hover{background:#dde2ee}
+.bpt.active{background:#fff;border-color:var(--bdr);color:var(--txt);position:relative;bottom:-1px;z-index:2}
+.bpt .bdg{background:var(--red);color:#fff;border-radius:8px;font-size:9px;padding:1px 5px;font-weight:700}
+.bpt.recon-tab i{color:var(--amber)}
+.bpt.recon-tab.active i{color:var(--navy)}
+.bpt.warn-ind::after{content:"!";position:absolute;top:-3px;right:-2px;width:12px;height:12px;background:var(--amber);color:#fff;border-radius:50%;font-size:9px;font-weight:700;line-height:12px;text-align:center}
+.bpt.dynamic::before{content:"NEW";position:absolute;top:-5px;left:50%;transform:translateX(-50%);background:var(--teal);color:#fff;font-size:7px;padding:0 4px;border-radius:2px;font-weight:700;letter-spacing:.3px}
+.pane{flex:1;overflow:hidden;display:none}
+.pane.active{display:flex;flex-direction:column}
+
+/* ── RIGHT ANNOTATE PANEL ── */
+.rp{width:126px;border-left:1px solid var(--bdr);background:#f5f6f8;flex-shrink:0;font-size:11px;overflow-y:auto}
+.rp-hdr{background:var(--navy);color:#fff;padding:5px 8px;font-size:11px;font-weight:700;letter-spacing:.3px}
+.rp-stitle{padding:4px 8px;color:var(--blue);font-weight:700;font-size:11px}
+.rp-item{padding:3px 8px;display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11px;color:var(--txt2)}
+.rp-item:hover{background:#eef0f5}
+.rp-item i{font-size:13px;color:var(--amber)}
+
+/* ── PDF DOC STYLES ── */
+.w2-doc{background:#fff;width:640px;padding:18px 22px;box-shadow:0 2px 12px rgba(0,0,0,.22);flex-shrink:0}
+.w2-doc-title{font-size:13px;font-weight:700;margin-bottom:3px;font-family:Arial}
+.w2-doc-sub{font-size:9px;color:#555;margin-bottom:8px;font-family:Arial}
+.w2g{display:grid;gap:0}
+.w2g.g2{grid-template-columns:1fr 1fr}
+.w2g.g3{grid-template-columns:1fr 1fr 1fr}
+.w2g.g1{grid-template-columns:1fr}
+.w2b{border:1px solid #888;padding:3px 6px;min-height:32px}
+.w2b+.w2b{border-left:none}
+.w2b .wl{font-size:9px;color:#333;font-weight:700;margin-bottom:1px}
+.w2b .wv{font-size:12px;font-weight:700}
+
+/* ── INPUT FORMS ── */
+.if-pane{flex:1;display:flex;overflow:hidden}
+.if-list{width:205px;border-right:1px solid var(--bdr);display:flex;flex-direction:column;flex-shrink:0}
+.if-list-hdr{background:var(--navy);color:#fff;font-size:11px;font-weight:700;padding:5px 8px;flex-shrink:0}
+.if-filter{padding:4px 6px;border-bottom:1px solid var(--g1);flex-shrink:0}
+.if-filter input{width:100%;height:20px;border:1px solid var(--g2);border-radius:3px;padding:0 5px;font-size:11px}
+.if-entries{overflow-y:auto;max-height:110px;flex-shrink:0;border-bottom:1px solid var(--g1)}
+.if-entry{padding:4px 8px;cursor:pointer;border-bottom:1px solid var(--g1);font-size:11px;display:flex;align-items:center;gap:5px}
+.if-entry:hover{background:#f0f2f6}
+.if-entry.sel{background:var(--blue-lt);color:var(--blue);font-weight:600}
+.sec-hdr{font-size:10px;font-weight:700;color:var(--g4);padding:3px 8px;background:#f7f8fa;border-bottom:1px solid var(--g1);letter-spacing:.3px}
+.sec-item{padding:3px 8px;font-size:11px;cursor:pointer;border-bottom:1px solid var(--g1)}
+.sec-item:hover{background:#eef0f5}
+.sec-item.sel{background:var(--blue-lt);color:var(--blue);font-weight:600}
+.secs-scroll{flex:1;overflow-y:auto}
+.if-btns{padding:4px 7px;border-top:1px solid var(--g1);display:flex;gap:3px;flex-shrink:0}
+.if-btn{height:19px;padding:0 5px;border:1px solid var(--g2);background:#fff;border-radius:3px;font-size:10px;cursor:pointer;display:flex;align-items:center;gap:2px;font-weight:600}
+.if-btn.add{background:var(--green-lt);border-color:var(--green);color:var(--green)}
+.if-btn.del{background:var(--red-lt);border-color:var(--red);color:var(--red)}
+.if-btn.move{background:var(--amber-lt);border-color:var(--amber);color:var(--amber)}
+.if-right{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.if-right-hdr{height:23px;display:flex;align-items:center;padding:0 7px;gap:6px;border-bottom:1px solid var(--g1);background:#fafbfc;flex-shrink:0}
+.if-right-hdr .ename{font-size:11px;font-weight:700;color:var(--blue)}
+.if-catnav{height:24px;display:flex;align-items:center;overflow-x:auto;border-bottom:2px solid var(--bdr);background:#f0f2f7;flex-shrink:0;padding:0 3px}
+.if-catnav::-webkit-scrollbar{height:3px}
+.if-catbtn{height:21px;padding:0 7px;border:none;background:transparent;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt2);border-bottom:2px solid transparent;margin-bottom:-2px}
+.if-catbtn.active{color:var(--navy);font-weight:700;border-bottom-color:var(--blue)}
+.if-form-scroll{flex:1;overflow-y:auto;padding:7px}
+.if-form-body{display:flex;gap:9px}
+.if-form-main{flex:1;min-width:0}
+.if-form-side{width:220px;flex-shrink:0;font-size:11px}
+
+/* ── FORM FIELDS ── */
+.tp-row{display:flex;align-items:center;gap:10px;margin-bottom:5px;padding:3px 7px;border:1px solid var(--g2);border-radius:3px;width:fit-content}
+.tp-row label{display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer}
+.py-box{margin-left:auto;text-align:right}
+.py-lbl{font-size:10px;color:var(--g3);margin-bottom:1px}
+.py-val{height:19px;width:90px;border:1px solid var(--g2);border-radius:2px;text-align:right;font-size:11px;padding:0 4px;background:#f9f9f9}
+.fg{display:grid;gap:0}
+.fg.g3{grid-template-columns:1fr 1fr 1fr}
+.fg.g2{grid-template-columns:1fr 1fr}
+.fg.g1{grid-template-columns:1fr}
+.ff{border:1px solid var(--g2);padding:3px 5px;background:#fff;min-height:38px}
+.ff+.ff{border-left:none}
+.ff.hl{border:2px solid var(--amber)!important;background:#fffce6!important;box-shadow:inset 0 0 0 1px rgba(198,125,0,.18)}
+.ff .fl{font-size:10px;color:var(--txt2);font-weight:600;margin-bottom:2px}
+.ff .fl.req::after{content:"*";color:var(--red);margin-left:2px}
+.ff-ir{display:flex;align-items:center;gap:3px}
+.ff input[type=text],.ff input[type=number],.ff input[type=date],.ff select,.ff textarea{border:1px solid #c8cad0;border-radius:2px;font-size:12px;padding:1px 4px;background:#fff;color:var(--txt)}
+.ff input[type=text],.ff input[type=number]{height:20px;width:74px}
+.ff input.wide{width:100%;height:20px}
+.ff select{height:20px;min-width:54px}
+.ff textarea{width:100%;resize:none;font-size:11px;padding:2px 4px}
+.ff input:focus,.ff select:focus,.ff textarea:focus{outline:none;border-color:var(--blue)}
+.ff .pb{width:15px;height:15px;border:1px solid var(--blue);border-radius:2px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--blue);flex-shrink:0}
+.ff .mb{width:15px;height:15px;border:1px solid var(--g3);border-radius:2px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--g3);flex-shrink:0}
+.ff-hl-note{font-size:9px;color:var(--amber);margin-bottom:1px;display:flex;align-items:center;gap:3px;font-weight:700}
+.side-section{margin-bottom:8px}
+.side-hdr{font-size:10px;font-weight:700;color:var(--g4);margin-bottom:3px;padding-bottom:2px;border-bottom:1px solid var(--g1)}
+.side-row{display:flex;align-items:flex-start;gap:3px;margin-bottom:3px;font-size:11px}
+.dots{flex:1;border-bottom:1px dotted var(--g2);margin:0 2px;height:11px}
+.side-section p{font-size:11px;color:var(--red);line-height:1.4;margin-bottom:2px}
+.chk-row{display:flex;align-items:center;gap:5px;font-size:11px;margin-bottom:2px}
+.k1-income-table{width:100%;border-collapse:collapse;font-size:11px}
+.k1-income-table th{background:#eef1f7;padding:4px 6px;text-align:left;border-bottom:1px solid var(--bdr);font-size:10px;font-weight:700;color:var(--navy)}
+.k1-income-table td{padding:3px 6px;border-bottom:1px solid var(--g1);vertical-align:middle}
+.k1-income-table td input{height:19px;border:1px solid var(--g2);border-radius:2px;font-size:11px;padding:1px 4px;width:80px}
+.field-active-hl{border:2px solid var(--amber)!important;background:#fffce8!important;box-shadow:0 0 0 3px rgba(198,125,0,.18)!important}
+.field-active-hl input,.field-active-hl select{border-color:var(--amber)!important;background:#fffce8!important}
+@keyframes fieldPulse{0%{box-shadow:0 0 0 0 rgba(198,125,0,.6)}70%{box-shadow:0 0 0 8px rgba(198,125,0,0)}100%{box-shadow:0 0 0 0 rgba(198,125,0,0)}}
+
+/* ── LEADSHEETS / NOTES ── */
+.lt{width:100%;border-collapse:collapse;font-size:11px}
+.lt th{background:#eef0f5;padding:5px 10px;text-align:left;border-bottom:1px solid var(--bdr);font-weight:700;color:var(--navy);font-size:10px}
+.lt td{padding:5px 10px;border-bottom:1px solid var(--g1)}
+.stt{font-size:10px;padding:2px 6px;border-radius:3px;font-weight:700}
+.stt.ok{background:var(--green-lt);color:var(--green)}
+.stt.pend{background:var(--amber-lt);color:var(--amber)}
+.ntb{height:25px;background:#f5f6f8;border-bottom:1px solid var(--g1);display:flex;align-items:center;padding:0 7px;gap:4px;flex-shrink:0}
+.ntb button{height:19px;padding:0 6px;border:1px solid var(--g2);background:#fff;border-radius:3px;font-size:11px;cursor:pointer}
+
+/* ── RECONCILIATION STATES ── */
+.recon-pane{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#f2f4f9}
+.recon-state{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.recon-state.hidden{display:none!important}
+/* State A / D: CTA */
+.recon-cta{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:32px;color:var(--g4)}
+.recon-cta i{font-size:56px;color:var(--g2)}
+.recon-cta h3{font-size:17px;font-weight:700;color:var(--navy);margin:0}
+.recon-cta p{font-size:12px;color:var(--g3);max-width:340px;line-height:1.6;margin:0}
+.recon-cta .mbtn.primary{height:36px;font-size:13px;padding:0 24px;gap:7px}
+.recon-cta-sub{font-size:10px;color:var(--g3);margin-top:4px}
+.recon-cta.success i{color:var(--green)}
+.recon-cta.success h3{color:var(--green)}
+.recon-no-issues-ts{font-size:10px;color:var(--g3);display:flex;align-items:center;gap:4px}
+/* State B: Running */
+.recon-running-card{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:32px;max-width:440px;margin:0 auto;width:100%}
+.recon-running-icon i{font-size:52px;color:var(--blue)}
+.recon-running-card h3{font-size:15px;font-weight:700;color:var(--navy);margin:0}
+.recon-running-msg{font-size:12px;color:var(--g4);min-height:20px;font-style:italic}
+.recon-running-progress{width:100%;height:6px;background:var(--g1);border-radius:3px;overflow:hidden;margin:4px 0}
+.recon-running-bar{height:100%;background:var(--blue-btn);border-radius:3px;transition:width .4s ease;width:0%}
+.recon-running-steps{display:flex;flex-direction:column;gap:4px;width:100%;text-align:left}
+.rrs{display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:4px;font-size:11px;color:var(--g3)}
+.rrs.done{color:var(--green)}.rrs.done i{color:var(--green)}
+.rrs.active{color:var(--navy);background:var(--blue-lt);font-weight:600}.rrs.active i{color:var(--blue)}
+.rrs i{font-size:13px;flex-shrink:0}
+@keyframes spin2{to{transform:rotate(360deg)}}
+.spin2{animation:spin2 .9s linear infinite;display:inline-block}
+/* State C: Results */
+.rtb{height:33px;background:var(--navy);display:flex;align-items:center;padding:0 10px;gap:8px;flex-shrink:0}
+.rtb-title{color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;gap:5px}
+.rtb-title i{color:#ffc857}
+.rstat-bar{display:flex;gap:9px;margin-left:6px}
+.rst{font-size:10px;color:#8ba4c8;display:flex;align-items:center;gap:3px}
+.rst b{font-size:12px;font-weight:700;color:#fff}
+.rst.warn b{color:#ffc857}
+.r-sp{flex:1}
+.ra{display:flex;gap:5px;align-items:center}
+.ra-btn{height:23px;padding:0 9px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;border-radius:3px;cursor:pointer;font-size:11px;display:flex;align-items:center;gap:4px;font-weight:600}
+.ra-btn:hover{background:rgba(255,255,255,.2)}
+.ra-btn.exp{background:#1e7fd4;border-color:#1e7fd4}
+.ra-btn.exp:hover{background:#1668b5}
+.ra-btn.exp:disabled{background:#3a4d65;border-color:#3a4d65;color:#6a7f98;cursor:not-allowed}
+.last-run{font-size:10px;color:#6a8ab8;display:flex;align-items:center;gap:4px}
+.last-run i{font-size:11px}
+/* Filter bar */
+.rfbar{height:27px;background:#e4e8f0;border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 9px;gap:6px;flex-shrink:0}
+.rfbar-lbl{font-size:10px;font-weight:700;color:var(--g4);letter-spacing:.3px}
+.fb{height:18px;padding:0 9px;border:1px solid var(--g2);background:#fff;border-radius:9px;font-size:10px;cursor:pointer;color:var(--txt2);display:flex;align-items:center;gap:3px}
+.fb:hover{background:var(--blue-lt);border-color:var(--blue);color:var(--blue)}
+.fb.act{background:var(--blue-lt);border-color:var(--blue);color:var(--blue);font-weight:700}
+.fb .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;display:inline-block}
+.fb .dot.blank,.fb .dot.missing{background:var(--red)}
+.fb .dot.mismatch{background:var(--amber)}
+/* Two-panel layout */
+.rcols{flex:1;display:grid;grid-template-columns:180px 1fr;overflow:hidden;gap:1px;background:var(--bdr)}
+.rcol{background:#fff;display:flex;flex-direction:column;overflow:hidden}
+.rch{padding:5px 8px;background:#eef1f7;border-bottom:1px solid var(--bdr);font-size:10px;font-weight:700;color:var(--navy);letter-spacing:.3px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.rch span{font-size:10px;color:var(--g3);font-weight:400}
+.rcb{flex:1;overflow-y:auto}
+/* Category list */
+.cat-item{padding:7px 8px;border-bottom:1px solid var(--g1);cursor:pointer;display:flex;align-items:center;gap:6px}
+.cat-item:hover{background:#f5f7fc}
+.cat-item.active{background:var(--blue-lt);border-left:3px solid var(--blue);padding-left:5px}
+.cat-item .ci{font-size:14px;color:var(--g3)}
+.cat-item.active .ci{color:var(--blue)}
+.cat-info{flex:1;min-width:0}
+.cat-name{font-size:11px;font-weight:700}
+.cat-sub{font-size:9px;color:var(--g3);margin-top:1px}
+.cbdg{min-width:17px;height:15px;border-radius:8px;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.cbdg.has{background:var(--red);color:#fff}
+.cbdg.has.w{background:var(--amber)}
+.cbdg.none{background:var(--green-lt);color:var(--green);border:1px solid #a8d8b8}
+/* Field table */
+.rtable{width:100%;border-collapse:collapse;font-size:11px}
+.rtable thead th{background:#f0f2f7;padding:5px 7px;text-align:left;border-bottom:2px solid var(--bdr);font-size:10px;font-weight:700;color:var(--navy);white-space:nowrap;position:sticky;top:0;z-index:1}
+.rtable tbody tr{border-bottom:1px solid var(--g1);cursor:pointer}
+.rtable tbody tr:hover td{background:#f5f7fc}
+.rtable tbody tr.row-active td{background:var(--blue-lt)}
+.rtable td{padding:5px 7px;vertical-align:middle;font-size:11px}
+.fn{font-weight:600}
+.fn .sub{font-size:9px;color:var(--g3);font-weight:400;margin-top:1px}
+.gchip{font-size:9px;padding:2px 6px;border-radius:3px;font-weight:700;white-space:nowrap;display:inline-block}
+.gchip.blank,.gchip.missing{background:var(--red-lt);color:var(--red)}
+.gchip.mismatch{background:var(--amber-lt);color:var(--amber)}
+.gchip.edited{background:var(--green-lt);color:var(--green)}
+.gchip.form-missing-spb,.gchip.form-missing-tax{background:var(--red-lt);color:var(--red)}
+.rtable .ent-row td{background:#f5f7fc;font-size:10px;font-weight:700;color:var(--navy);padding:4px 7px}
+/* Go To button */
+.goto-btn{height:22px;padding:0 8px;background:var(--navy);color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:10px;font-weight:700;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;transition:background .15s}
+.goto-btn:hover{background:var(--blue)}
+.goto-btn i{font-size:12px}
+
+/* ── RERUN OVERLAY ── */
+.rerun-overlay{position:absolute;inset:0;background:rgba(20,34,62,.72);z-index:100;display:none;align-items:center;justify-content:center}
+.rerun-overlay.show{display:flex}
+.rerun-box{background:#fff;border-radius:6px;padding:20px 24px;width:400px;box-shadow:0 8px 36px rgba(0,0,0,.35);text-align:center}
+.rerun-box h3{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:7px}
+.rs{display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid var(--g1);font-size:11px;color:var(--txt2);text-align:left}
+.rs:last-child{border-bottom:none}
+.rs i{font-size:14px;color:var(--g2);flex-shrink:0}
+.rs.active i{color:var(--blue)}
+.rs.done i{color:var(--green)}
+.rerun-prog{height:5px;background:var(--g1);border-radius:3px;overflow:hidden;margin-top:10px}
+.rerun-prog-bar{height:100%;background:var(--blue-btn);border-radius:3px;transition:width .6s ease}
+.rerun-msg{font-size:10px;color:var(--g3);margin-top:5px}
+
+
+/* ── RECONCILIATION SPLIT BUTTON ── */
+.recon-split{position:relative;display:inline-flex;align-items:center;height:26px;border-radius:3px;overflow:visible;flex-shrink:0}
+.recon-split-main{height:26px;padding:0 10px 0 9px;border:1.5px solid var(--navy);background:var(--navy);color:#fff;border-right:1px solid rgba(255,255,255,.2);border-radius:3px 0 0 3px;cursor:pointer;display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;white-space:nowrap;transition:background .15s}
+.recon-split-main:hover{background:var(--navy2)}
+.recon-split-main.disabled{background:var(--g2);border-color:var(--g2);color:var(--g3);cursor:not-allowed;pointer-events:none}
+.recon-split-main .bdg{background:#e05c4a;color:#fff;border-radius:8px;font-size:9px;padding:1px 5px;font-weight:700;margin-left:3px}
+.recon-split-arr{height:26px;width:22px;border:1.5px solid var(--navy);border-left:1px solid rgba(255,255,255,.2);background:var(--navy);color:#fff;border-radius:0 3px 3px 0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:background .15s}
+.recon-split-arr:hover{background:var(--navy2)}
+.recon-split-arr.disabled{background:var(--g2);border-color:var(--g2);color:var(--g3);cursor:not-allowed;pointer-events:none}
+.recon-dropdown{position:absolute;top:calc(100% + 4px);right:0;min-width:250px;background:#fff;border:1px solid var(--bdr);border-radius:5px;box-shadow:0 6px 24px rgba(0,0,0,.18);z-index:400;overflow:hidden;display:none}
+.recon-dropdown.open{display:block}
+.recon-dd-item{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--g1);transition:background .1s}
+.recon-dd-item:last-child{border-bottom:none}
+.recon-dd-item:hover:not(.dd-disabled){background:var(--blue-lt)}
+.recon-dd-item.dd-disabled{opacity:.45;cursor:not-allowed;pointer-events:none}
+.recon-dd-icon{width:30px;height:30px;border-radius:5px;background:var(--navy);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;flex-shrink:0;margin-top:1px}
+.recon-dd-icon.view{background:var(--blue-lt);color:var(--blue)}
+.recon-dd-title{font-size:12px;font-weight:700;color:var(--txt);line-height:1.2}
+.recon-dd-sub{font-size:10px;color:var(--g3);margin-top:2px;line-height:1.3}
+.has-tooltip{position:relative}
+.has-tooltip .tip{visibility:hidden;opacity:0;position:absolute;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;font-size:10px;white-space:nowrap;padding:4px 9px;border-radius:4px;pointer-events:none;transition:opacity .15s;z-index:900}
+.has-tooltip .tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--navy)}
+.has-tooltip:hover .tip{visibility:visible;opacity:1}
+
+/* ── BACKGROUND TOAST (legacy) ── */
+.bg-toast{position:fixed;bottom:30px;right:20px;background:var(--navy);color:#fff;border-radius:6px;padding:10px 16px;font-size:12px;display:flex;align-items:center;gap:9px;box-shadow:0 4px 20px rgba(0,0,0,.28);z-index:280;opacity:0;pointer-events:none;transition:opacity .4s,transform .4s;transform:translateY(8px);max-width:340px}
+.bg-toast.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+.bg-toast i{font-size:16px;color:#ffc857;flex-shrink:0}
+
+
+
+.spb-retry-btn{display:flex;align-items:center;gap:6px;background:var(--navy);color:#fff;border:none;border-radius:4px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;transition:background .15s;}
+.spb-retry-btn:hover{background:var(--navy2);}
+
+/* ── SPbinder TOAST STACK ── */
+.spb-toast-wrap{position:fixed;top:40px;right:14px;z-index:600;display:flex;flex-direction:column;gap:8px;pointer-events:none;max-width:400px}
+.spb-toast{background:#fff;border:1px solid #d0d5de;border-radius:6px;min-width:290px;max-width:400px;box-shadow:0 4px 24px rgba(0,0,0,.2);display:flex;flex-direction:column;overflow:hidden;pointer-events:auto;opacity:0;transform:translateX(28px);transition:opacity .3s,transform .3s}
+.spb-toast.show{opacity:1;transform:translateX(0)}
+.spb-toast-top{display:flex;align-items:flex-start}
+.spb-toast-accent{width:4px;min-height:60px;flex-shrink:0}
+.spb-toast.type-success .spb-toast-accent{background:#28a861}
+.spb-toast.type-warning .spb-toast-accent{background:#d08000}
+.spb-toast.type-error .spb-toast-accent{background:#c0392b}
+.spb-toast.type-running .spb-toast-accent,.spb-toast.type-info .spb-toast-accent{background:#1e7fd4}
+.spb-toast-icon{padding:12px 10px 10px;flex-shrink:0}
+.spb-toast.type-success .spb-toast-icon i{color:#28a861;font-size:20px}
+.spb-toast.type-warning .spb-toast-icon i{color:#d08000;font-size:20px}
+.spb-toast.type-error .spb-toast-icon i{color:#c0392b;font-size:20px}
+.spb-toast.type-running .spb-toast-icon i,.spb-toast.type-info .spb-toast-icon i{color:#1e7fd4;font-size:20px}
+.spb-toast-body{flex:1;padding:10px 8px 10px 2px}
+.spb-toast-title{font-size:12px;font-weight:700;color:var(--txt)}
+.spb-toast-msg{font-size:11px;color:var(--txt2);margin-top:2px;line-height:1.4}
+.spb-toast-link{font-size:11px;color:var(--blue-btn);font-weight:600;margin-top:5px;display:inline-flex;align-items:center;gap:4px;text-decoration:none}
+.spb-toast-link:hover{text-decoration:underline;color:#1668b5}
+.spb-toast-ts{font-size:10px;color:var(--g3);margin-top:3px}
+.spb-toast-close{align-self:flex-start;margin:8px 8px 0 0;background:none;border:none;cursor:pointer;color:var(--g3);font-size:13px;line-height:1;padding:2px 4px;border-radius:3px;flex-shrink:0}
+.spb-toast-close:hover{color:var(--txt);background:var(--g1)}
+.spb-toast-prog{height:3px;background:#e0e4ec}
+.spb-toast-prog-inner{height:100%;background:#1e7fd4;border-radius:0 2px 2px 0;transition:width .4s linear}
+
+/* ── MODALS ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-bg.open{opacity:1;pointer-events:auto}
+.modal{background:#fff;border-radius:5px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.mhdr{background:var(--navy);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700}
+.mhdr i{font-size:17px;color:#ffc857}
+.mbody{padding:16px}
+.mftr{padding:9px 16px;border-top:1px solid var(--g1);display:flex;gap:8px;justify-content:flex-end}
+.mbtn{height:29px;padding:0 16px;border:none;border-radius:3px;cursor:pointer;font-size:12px;font-weight:700;display:flex;align-items:center;gap:5px}
+.mbtn.primary{background:var(--blue-btn);color:#fff}.mbtn.primary:hover{background:#1668b5}
+.mbtn.ghost{background:#fff;border:1px solid var(--g2);color:var(--txt2)}.mbtn.ghost:hover{background:#f0f2f6}
+.mbtn.warn{background:var(--amber);color:#fff}
+.exp-steps{display:flex;flex-direction:column;gap:6px;margin:10px 0}
+.exp-step{display:flex;align-items:center;gap:8px;font-size:12px;padding:5px 10px;border-radius:4px;border:1px solid var(--g1);background:#f5f6f8}
+.exp-step.done{background:var(--green-lt);border-color:#a8d8b8}
+.exp-step.active{background:var(--blue-lt);border-color:#a8c8e8}
+.exp-step.pending{color:var(--g3)}
+.exp-step i{font-size:15px;flex-shrink:0}
+.exp-step.done i{color:var(--green)}.exp-step.active i{color:var(--blue)}.exp-step.pending i{color:var(--g2)}
+.exp-prog{height:4px;background:var(--g1);border-radius:2px;margin:8px 0 5px;overflow:hidden}
+.exp-prog-bar{height:100%;background:var(--blue-btn);border-radius:2px;transition:width .5s ease}
+
+/* ── BANNER ── */
+.banner{position:fixed;top:64px;left:50%;transform:translateX(-50%) translateY(-12px);padding:9px 18px;border-radius:5px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:8px;box-shadow:0 4px 18px rgba(0,0,0,.25);z-index:300;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;cursor:pointer;max-width:600px;min-width:300px}
+.banner.show{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+.banner.gap{background:var(--amber);color:#fff}
+.banner.err{background:var(--red);color:#fff}
+.banner.success{background:var(--green);color:#fff}
+.banner i{font-size:17px}
+.banner .bx{margin-left:10px;opacity:.8;font-size:15px;cursor:pointer}
+
+/* ── BINDER CLOSED OVERLAY ── */
+.binder-closed-overlay{position:fixed;inset:0;background:rgba(20,34,62,.88);z-index:500;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:#fff;text-align:center;padding:32px}
+.binder-closed-overlay.hidden{display:none}
+.binder-closed-overlay i{font-size:64px;color:#6a8ab8}
+.binder-closed-overlay h2{font-size:18px;font-weight:700;margin:0}
+.binder-closed-overlay p{font-size:12px;color:#8ba4c8;max-width:320px;line-height:1.6;margin:0}
+
+/* ── MISC ── */
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{animation:spin .8s linear infinite;display:inline-block}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:#f0f2f5}
+::-webkit-scrollbar-thumb{background:#c0c4cc;border-radius:3px}
+.hidden{display:none!important}
+
+
+.wv-btn{height:20px;padding:0 10px;border:1px solid rgba(45,95,166,.4);background:rgba(45,95,166,.1);color:#6a8ab8;border-radius:3px;cursor:pointer;font-size:10px;font-weight:700;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.wv-btn:hover{background:rgba(45,95,166,.25);color:#8ab4e8;border-color:rgba(45,95,166,.6)}
+.wv-btn.active{background:#2d5fa6;color:#fff;border-color:#2d5fa6}
+
+/* ── BLOCKED STATE ── */
+.recon-blocked-card{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:32px}
+.recon-blocked-card .blk-icon{font-size:52px;color:var(--red)}
+.recon-blocked-card h3{font-size:16px;font-weight:700;color:var(--red);margin:0}
+.recon-blocked-card p{font-size:12px;color:var(--txt2);max-width:380px;line-height:1.6;margin:0}
+.recon-blocked-card .blk-actions{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:4px}
+
+
+/* ── ACKNOWLEDGE / IGNORE ── */
+.ai-btn{height:22px;padding:0 9px;border-radius:3px;cursor:pointer;font-size:10px;font-weight:700;display:inline-flex;align-items:center;gap:3px;border:1px solid}
+.ai-ack{background:#eaf5ee;color:#1a7a45;border-color:#a8d8b8}
+.ai-ack:hover{background:#d0eedd}
+.ai-ign{background:#fff3dc;color:#c67d00;border-color:#f0d8a0}
+.ai-ign:hover{background:#fde8a8}
+.ai-ack.active{background:#1a7a45;color:#fff;border-color:#1a7a45}
+.ai-ign.active{background:#c67d00;color:#fff;border-color:#c67d00}
+.suppressed-section{margin-top:8px;border-top:1px solid var(--g1)}
+.suppressed-hdr{padding:7px 12px;font-size:10px;font-weight:700;color:var(--g3);letter-spacing:.4px;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:6px;user-select:none}
+.suppressed-hdr:hover{background:var(--g0)}
+.suppressed-row{display:flex;align-items:center;padding:7px 12px;border-bottom:1px solid var(--g1);font-size:11px;gap:8px;background:#fafbfc;opacity:.75}
+.suppressed-row:last-child{border-bottom:none}
+.sup-tag{padding:2px 6px;border-radius:8px;font-size:9px;font-weight:700}
+.sup-tag.ack{background:#eaf5ee;color:#1a7a45;border:1px solid #a8d8b8}
+.sup-tag.ign{background:#fff3dc;color:#c67d00;border:1px solid #f0d8a0}
+.sup-undo{height:18px;padding:0 7px;background:#fff;border:1px solid var(--g2);border-radius:3px;cursor:pointer;font-size:9px;color:var(--g4)}
+.sup-undo:hover{border-color:var(--red);color:var(--red)}
+
+
+/* ── GAP NAV PANEL ── */
+#gapNavPanel{flex-shrink:0;max-height:80px;overflow-x:auto}
+#gapNavPanel .gchip{font-size:9px;padding:1px 5px}
+/* ── K-1 RECLASS MODAL OVERRIDE ── */
+#k1ReclassModal .modal{border-top:3px solid var(--purple)}
+
+</style>
+</head>
+<body>
+
+<div class="title-bar"><i class="ti ti-file-text"></i><i class="ti ti-layout-bottombar" style="color:#ffc857;margin-right:4px"></i><b>SPbinder</b> &#8212; None Leadsheets &nbsp;|&nbsp; TESTING, 1040 &nbsp;|&nbsp; 2025 &nbsp;|&nbsp; Binder ID: 45486422</div>
+
+<div class="menu-bar">
+  <div class="mi">Binder</div>
+  <div class="mi">Edit</div>
+  <div class="mi">View</div>
+  <!-- recon → toolbar -->
+  <div class="mi">Help</div>
+</div>
+
+<div class="toolbar">
+  <button class="tb"><i class="ti ti-file-plus"></i></button>
+  <button class="tb"><i class="ti ti-device-floppy"></i></button>
+  <div class="tbsep"></div>
+  <button class="tb"><i class="ti ti-printer"></i></button>
+  <button class="tb binder-close" id="closeBinder" onclick="closeBinder()" title="Close Binder"><i class="ti ti-folder-minus"></i> Close Binder</button>
+  <button class="tb export-btn" id="exportBtn" onclick="openModal('exportModal')"><i class="ti ti-upload"></i> Export to Tax Software</button>
+  <div class="tbsep"></div>
+  <div class="recon-split has-tooltip" id="reconSplitWrap">
+    <span class="tip" id="reconSplitTip">Complete an export first to enable reconciliation</span>
+    <button class="recon-split-main disabled" id="reconSplitMain" onclick="reconSplitMainClick()">
+      <i class="ti ti-git-compare" style="font-size:13px"></i> Reconciliation
+      <span class="bdg hidden" id="reconMenuBadge">0</span>
+    </button>
+    <button class="recon-split-arr disabled" id="reconSplitArr" onclick="toggleReconDropdown(event)">
+      <i class="ti ti-chevron-down"></i>
+    </button>
+    <div class="recon-dropdown" id="reconDropdown">
+      <div class="recon-dd-item dd-disabled" id="ddRunRecon" onclick="reconDdRun()">
+        <div class="recon-dd-icon"><i class="ti ti-refresh"></i></div>
+        <div><div class="recon-dd-title">Run Reconciliation</div><div class="recon-dd-sub" id="ddRunSub">Complete an export first</div></div>
+      </div>
+      <div class="recon-dd-item dd-disabled" id="ddViewResults" onclick="reconDdView()">
+        <div class="recon-dd-icon view"><i class="ti ti-report"></i></div>
+        <div><div class="recon-dd-title">View Reconciliation Results</div><div class="recon-dd-sub" id="ddViewSub">No results yet — run reconciliation first</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="tbsep"></div>
+  <button class="tb"><i class="ti ti-search"></i></button>
+  <button class="tb"><i class="ti ti-settings"></i></button>
+  <div style="margin-left:auto;padding:3px 12px;border-radius:10px;font-size:10px;font-weight:700;display:flex;align-items:center;gap:5px;border:1px solid #2d5fa640;background:#2d5fa614;color:#2d5fa6"><i class="ti ti-layout-bottombar" style="font-size:13px"></i>None Leadsheets</div>
+  <div style="margin-left:auto;padding:3px 12px;border-radius:10px;font-size:10px;font-weight:700;display:flex;align-items:center;gap:5px;border:1px solid #6b3fa040;background:#6b3fa014;color:#6b3fa0"><i class="ti ti-file-text" style="font-size:13px"></i>None Leadsheets</div>
+  <button class="tb hidden binder-open" id="openBinder" onclick="openBinder()"><i class="ti ti-folder-open"></i> Open Binder</button>
+</div>
+
+<div class="scenario-bar" id="scenarioBar">
+  <label>&#9654; SCENARIO:</label>
+  <button class="sc-btn active" id="sc-SC1" onclick="runScenario('SC1')" title="Export → auto recon → all fields match">No Gaps Found</button>
+  <button class="sc-btn" id="sc-SC2" onclick="runScenario('SC2')" title="Export → auto recon → gaps found, link to report">Gaps Found</button>
+  <button class="sc-btn" id="sc-SC3" onclick="runScenario('SC3')" title="After export, binder dirty → manual recon → export required popup">Export Pending Warning</button>
+  <button class="sc-btn" id="sc-SC4" onclick="runScenario('SC4')" title="Export → auto recon fails → error toast with Retry">Reconciliation Error &amp; Retry</button>
+</div>
+
+<div class="app-body">
+
+  <!-- RERUN OVERLAY -->
+  <div class="rerun-overlay" id="rerunOverlay">
+    <div class="rerun-box">
+      <h3><i class="ti ti-loader spin" style="color:var(--blue)"></i> Reconciliation Running</h3>
+      <div id="rerunSteps"></div>
+      <div class="rerun-prog"><div class="rerun-prog-bar" id="rerunProgBar" style="width:0%"></div></div>
+      <div class="rerun-msg" id="rerunMsg">Initialising&#8230;</div>
+      <button onclick="document.getElementById('rerunOverlay').classList.remove('show')" style="margin-top:12px;height:24px;padding:0 14px;border:1px solid var(--g2);background:#fff;border-radius:3px;cursor:pointer;font-size:11px;color:var(--g4)"><i class="ti ti-minimize" style="font-size:12px"></i> Minimise</button>
+    </div>
+  </div>
+
+  <!-- LEFT TREE -->
+  <div class="lp">
+    <div class="lp-hdr">Index/Review Tree</div>
+    <div class="lp-srch"><input type="text" placeholder="Search Text..."></div>
+    <div class="tree">
+      <div class="tri" style="padding-left:4px"><i class="ti ti-chevron-down" style="font-size:10px;color:var(--g3)"></i><i class="ti ti-folder fol"></i><span class="lbl" style="font-weight:700">Go State K-1 01</span></div>
+      <div class="tri" style="padding-left:16px"><i class="ti ti-chevron-down" style="font-size:10px;color:var(--g3)"></i><i class="ti ti-folder fol"></i><span class="lbl" style="font-weight:700">Income</span></div>
+      <div class="tri" style="padding-left:30px"><i class="ti ti-chevron-down" style="font-size:10px;color:var(--g3)"></i><i class="ti ti-folder fol"></i><span class="lbl">W-2 Wages</span></div>
+      <div class="tri sel" id="tree-w2-whynot" style="padding-left:44px" onclick="openDoc('w2_whynot','WHYNOT STOP INC. — W-2 (2023)')"><i class="ti ti-file-pdf pdf"></i><span class="lbl">WHYNOT STOP INC.</span></div>
+      <div class="tri" id="tree-w2-usbank" style="padding-left:44px" onclick="openDoc('w2_usbank','US BANK NATIONAL ASSOC. — W-2 (2023)')"><i class="ti ti-file-pdf pdf"></i><span class="lbl">US BANK NATIONAL ASSOC.</span></div>
+      <div class="tri" style="padding-left:30px" onclick="openDoc('1099div','Fidelity Investments — 1099-DIV')"><i class="ti ti-chevron-right" style="font-size:10px;color:var(--g3)"></i><i class="ti ti-folder fol"></i><span class="lbl">Dividends (1099-DIV)</span></div>
+      <div class="tri" style="padding-left:30px" onclick="openDoc('1099int','Chase Bank NA — 1099-INT')"><i class="ti ti-chevron-right" style="font-size:10px;color:var(--g3)"></i><i class="ti ti-folder fol"></i><span class="lbl">Interest (1099-INT)</span></div>
+      <div class="tri" style="padding-left:30px" onclick="openDoc('1099r','Vanguard Group — 1099-R')"><i class="ti ti-chevron-right" style="font-size:10px;color:var(--g3)"></i><i class="ti ti-folder fol"></i><span class="lbl">1099-R Distributions</span></div>
+      <div class="tri" id="tree-k1" style="padding-left:30px" onclick="openDoc('k1','CHAPMAN IRREVOCABLE TRUST — K-1')"><i class="ti ti-chevron-right" style="font-size:10px;color:var(--g3)"></i><i class="ti ti-folder fol"></i><span class="lbl">Schedule K-1</span></div>
+    </div>
+    <div class="lptabs"><div class="lptab sel">INDEX TREE</div><div class="lptab">REVIEW TREE</div></div>
+  </div>
+
+  <!-- MAIN COLUMN -->
+  <div class="main" id="mainCol">
+
+    <!-- DOCUMENT VIEWER -->
+    <div class="dv" id="dvArea" style="height:220px">
+      <div class="dv-tb">
+        <i class="ti ti-file-pdf" id="dvIcon" style="color:var(--red);font-size:15px"></i>
+        <span id="dvTitle">WHYNOT STOP INC. &#8212; W-2 (2023)</span>
+        <div style="flex:1"></div>
+        <button onclick="zoomStep(-1)" style="height:19px;width:20px;border:1px solid var(--g2);background:#fff;border-radius:3px 0 0 3px;cursor:pointer;font-size:14px;font-weight:700;color:var(--g4);display:flex;align-items:center;justify-content:center">&#8722;</button>
+        <select id="dvZoom" style="height:19px;font-size:10px;border:1px solid var(--g2);border-left:none;border-right:none;border-radius:0;padding:0 2px;width:50px;text-align:center" onchange="applyZoom()">
+          <option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="100" selected>100%</option><option value="115">115%</option><option value="130">130%</option>
+        </select>
+        <button onclick="zoomStep(1)" style="height:19px;width:20px;border:1px solid var(--g2);background:#fff;border-radius:0 3px 3px 0;cursor:pointer;font-size:14px;font-weight:700;color:var(--g4);display:flex;align-items:center;justify-content:center">+</button>
+        <button onclick="resetZoom()" style="height:19px;padding:0 6px;border:1px solid var(--g2);background:#fff;border-radius:3px;cursor:pointer;font-size:10px;color:var(--g4);margin-left:3px"><i class="ti ti-refresh" style="font-size:12px"></i></button>
+        <span style="font-size:10px;color:var(--g3);margin-left:6px">Pg 1/1</span>
+      </div>
+      <div class="dv-inner" id="dvInner"></div>
+    </div>
+
+    <div class="resize-handle" id="resizeHandle" title="Drag to resize"></div>
+
+    <!-- BOTTOM PANEL -->
+    <div class="bp" id="bottomPanel" style="flex:1;min-height:200px">
+      <div class="bp-content">
+
+        <!-- INPUT FORMS -->
+        <div class="pane" id="pane-forms">
+          <div class="if-pane">
+            <div class="if-list">
+              <div class="if-list-hdr" id="ifListHdr">W-2</div>
+              <div class="if-filter"><input type="text" id="ifFilter" placeholder="Filter..."></div>
+              <div class="if-entries" id="ifEntries"></div>
+              <div class="secs-scroll" id="sectionsScroll"></div>
+              <div class="if-btns">
+                <button class="if-btn add"><i class="ti ti-plus"></i>Add</button>
+                <button class="if-btn del"><i class="ti ti-minus"></i>Delete</button>
+                <button class="if-btn move"><i class="ti ti-arrows-move"></i>Move</button>
+              </div>
+            </div>
+            <div class="if-right">
+              <div class="if-right-hdr">
+                <span class="ename" id="entryName">WHYNOT STOP INC. (T)</span>
+                <label style="display:flex;align-items:center;gap:3px;font-size:10px;color:var(--g3);margin-left:auto"><input type="checkbox"> Inactive</label>
+                <label style="display:flex;align-items:center;gap:3px;font-size:10px;color:var(--g3)"><input type="checkbox"> Mark as Estimate</label>
+                <span style="font-size:10px;color:var(--red);margin-left:5px">&#61; Required Fields</span>
+              </div>
+              <div class="if-catnav" id="ifCatNav"></div>
+              <div class="if-form-scroll">
+                <div id="gapNavPanel" style="display:none;padding:8px 14px;background:linear-gradient(90deg,#e8f1fb,#f0f4ff);border-bottom:2px solid var(--blue);font-size:11px;flex-shrink:0"></div>
+          <div class="if-form-body">
+                  <div class="if-form-main" id="mainFormContent"></div>
+                  <div class="if-form-side" id="mainFormSide"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LEADSHEETS -->
+        <div class="pane" id="pane-leads">
+          <div style="overflow:auto;flex:1">
+            <table class="lt"><thead><tr><th>Leadsheet</th><th>Description</th><th>Reference</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>LS-001</td><td>Wages &amp; Salary Reconciliation</td><td>W-2, Box 1</td><td><span class="stt pend">Pending</span></td></tr>
+              <tr><td>LS-002</td><td>Dividend Income</td><td>1099-DIV</td><td><span class="stt ok">Reviewed</span></td></tr>
+              <tr><td>LS-003</td><td>Interest Income</td><td>1099-INT</td><td><span class="stt ok">Reviewed</span></td></tr>
+              <tr><td>LS-004</td><td>Retirement Distribution</td><td>1099-R</td><td><span class="stt pend">Pending</span></td></tr>
+              <tr><td>LS-005</td><td>Schedule K-1 Income</td><td>K-1 Part III</td><td><span class="stt pend">Pending</span></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <!-- NOTES -->
+        <div class="pane active" id="pane-notes">
+          <div class="ntb"><button>&#43; Add Note</button><button>Add Response</button><button><i class="ti ti-trash"></i></button></div>
+          <div style="flex:1;overflow-y:auto">
+            <div style="padding:6px 12px;border-bottom:1px solid var(--g1)"><span style="font-size:11px;color:var(--blue);font-weight:600">Gokhale, Soham</span><span style="font-size:10px;color:var(--g3);margin-left:6px">Mar 27, 2026</span><div style="font-size:12px;margin-top:2px">abc</div></div>
+            <div style="padding:6px 12px;border-bottom:1px solid var(--g1)"><span style="font-size:11px;color:var(--blue);font-weight:600">Gokhale, Soham</span><span style="font-size:10px;color:var(--g3);margin-left:6px">Mar 27, 2026</span><div style="font-size:12px;margin-top:2px">test 25aug</div></div>
+          </div>
+        </div>
+
+        <!-- RECONCILIATION -->
+        <div class="pane" id="pane-recon" style="display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:var(--g3);font-size:13px">
+          <i class="ti ti-git-compare" style="font-size:40px;opacity:.3"></i>
+          <div>Reconciliation results appear as toast notifications.</div>
+          <div style="font-size:11px;opacity:.7">Use the Reconciliation button in the toolbar to run or view results.</div>
+        </div>
+
+      </div><!-- /bp-content -->     <div class="bp-tabs" id="bpTabs">
+        <div class="bpt" id="tab-leads" onclick="switchPane('leads')">LEADSHEETS</div>
+        <div class="bpt active" id="tab-notes" onclick="switchPane('notes')">NOTES</div>
+        <!-- recon tab removed -->
+      </div>
+
+    </div><!-- /bottomPanel -->
+  </div><!-- /main -->
+
+  <!-- RIGHT ANNOTATE -->
+  <div class="rp">
+    <div class="rp-hdr">ANNOTATE</div>
+    <div class="rp-stitle">&#9658; HighLight</div>
+    <div class="rp-item"><i class="ti ti-highlight"></i> Highlighter</div>
+    <div class="rp-item"><i class="ti ti-pencil"></i> Freehand</div>
+    <div class="rp-item"><i class="ti ti-underline"></i> Underline</div>
+    <div class="rp-item"><i class="ti ti-strikethrough"></i> Crossout</div>
+    <div class="rp-stitle">&#9658; Markups</div>
+    <div class="rp-item"><i class="ti ti-text-size"></i> TextBox</div>
+    <div class="rp-item"><i class="ti ti-arrow-up-right"></i> Arrow</div>
+    <div class="rp-item"><i class="ti ti-rectangle"></i> Rectangle</div>
+    <div class="rp-stitle">&#9658; Tools</div>
+    <div class="rp-item"><i class="ti ti-sticky-note"></i> Sticky Notes</div>
+  </div>
+
+</div><!-- /app-body -->
+
+<div class="statusbar">
+  <span id="statusMsg">All changes saved.</span>
+  <span style="display:flex;align-items:center;gap:4px;color:var(--green)"><i class="ti ti-circle-filled" style="font-size:9px"></i> Connected to Server</span>
+</div>
+
+<!-- MODALS -->
+<div class="modal-bg" id="exportModal">
+  <div class="modal" style="width:420px">
+    <div class="mhdr"><i class="ti ti-upload"></i> Export to Tax Software</div>
+    <div class="mbody" id="exportModalBody"></div>
+    <div class="mftr" id="exportModalFtr"></div>
+  </div>
+</div>
+<div class="modal-bg" id="rerunModal">
+  <div class="modal" style="width:440px">
+    <div class="mhdr"><i class="ti ti-refresh"></i> Re-run Reconciliation</div>
+    <div class="mbody" id="rerunModalBody"></div>
+    <div class="mftr" id="rerunModalFtr"></div>
+  </div>
+</div>
+
+
+<!-- BANNER -->
+<!-- banner removed: now uses toast -->
+
+<div class="spb-toast-wrap" id="spbToastWrap"></div>
+
+<!-- BINDER CLOSED OVERLAY -->
+<div class="binder-closed-overlay hidden" id="binderClosedOverlay">
+  <i class="ti ti-folder-x"></i>
+  <h2>Binder Closed</h2>
+  <p>The binder has been closed. All reconciliation results cleared. Open the binder to start a new session.</p>
+  <button class="mbtn primary" onclick="openBinder()" style="height:38px;font-size:13px;gap:8px;padding:0 24px;margin-top:8px"><i class="ti ti-folder-open"></i> Open Binder</button>
+</div>
+
+<script>
+
+
+
+
+const SCENARIOS = {
+  SC1:{id:'SC1',label:'No Gaps Found',sub:'Export → auto recon → all fields match',initialGaps:[],dirtyWarning:false,forceError:false,exportError:false},
+  SC2:{id:'SC2',label:'Gaps Found',sub:'Export → auto recon → gaps found, link to report',initialGaps:['w2b1','w2b2','w2b3','divord','intus'],dirtyWarning:false,forceError:false,exportError:false},
+  SC3:{id:'SC3',label:'Export Pending Warning',sub:'After export, binder has new edits → manual recon → export required popup',initialGaps:['w2b1','divord'],dirtyWarning:true,forceError:false,exportError:false},
+  SC4:{id:'SC4',label:'Reconciliation Error & Retry',sub:'Export → auto recon fails → error toast with Retry',initialGaps:[],dirtyWarning:false,forceError:true,exportError:false}
+};
+const BINDER_MODE = 'none';
+const ALL_FIELDS = {
+  w2b1:   {id:'w2b1',  name:'Box 1 \u2014 Wages, tips, other comp.', gapType:'missing',    spbVal:'$115,380.58', taxVal:'(blank)',     fType:'amount', cat:'wages',     ent:'WHYNOT STOP INC.',      ifInputId:'ff-b1'},
+  w2b2:   {id:'w2b2',  name:'Box 2 \u2014 Federal income tax',        gapType:'mismatch', spbVal:'$13,158.86',  taxVal:'$13,000.00',  fType:'amount', cat:'wages',     ent:'WHYNOT STOP INC.',      ifInputId:'ff-b2'},
+  w2b3:   {id:'w2b3',  name:'Box 3 \u2014 Social security wages',     gapType:'mismatch', spbVal:'$10,000.00',  taxVal:'$20,000.00',  fType:'amount', cat:'wages',     ent:'WHYNOT STOP INC.',      ifInputId:'ff-b3'},
+  divord: {id:'divord',name:'1a Ordinary Dividends',                    gapType:'mismatch',  spbVal:'$12,450.00',  taxVal:'$24,900.00',  fType:'amount', cat:'dividends', ent:'Fidelity Investments',  ifInputId:'ff-divord'},
+  intus:  {id:'intus', name:'3 Interest on US Savings Bonds',           gapType:'missing',    spbVal:'$1,200.00',   taxVal:'(blank)',     fType:'amount', cat:'interest',  ent:'Chase Bank NA',         ifInputId:'ff-intus'},
+  dist1:  {id:'dist1', name:'1 Gross distribution',                     gapType:'mismatch', spbVal:'$45,000.00',  taxVal:'$44,500.00',  fType:'amount', cat:'1099r',     ent:'Vanguard Group',        ifInputId:'ff-dist1'},
+  divqual:{id:'divqual',name:'1b Qualified Dividends',                  gapType:'mismatch', spbVal:'$9,800.00',   taxVal:'$8,200.00',   fType:'amount', cat:'dividends', ent:'Fidelity Investments',  ifInputId:'ff-divqual'},
+  w2dt:   {id:'w2dt',  name:'W-2 Issue Date',                           gapType:'mismatch', spbVal:'01/31/2025',  taxVal:'12/31/2025',  fType:'date',   cat:'wages',     ent:'WHYNOT STOP INC.',      ifInputId:'ff-dt'},
+  // ── Missing FORM entries (form absent in one system entirely) ──────────────
+  // form-missing-tax = form in SPbinder, NOT in Tax Software → re-export fixes it
+  // form-missing-spb = form in Tax Software, NOT in SPbinder → user must add form
+  w2_usbank_mtax: {id:'w2_usbank_mtax', name:'W-2 (2024)', gapType:'form-missing-tax',
+    spbVal:'Present in SPbinder', taxVal:'(form missing)',
+    fType:'form', cat:'wages', ent:'US BANK NATIONAL ASSOC.',
+    ifInputId: null,
+    formFields:[
+      {name:'Box 1 — Wages, tips, other comp.', spbVal:'$42,100.00', taxVal:'(missing)'},
+      {name:'Box 2 — Federal income tax withheld', spbVal:'$4,810.00', taxVal:'(missing)'},
+      {name:'Box 3 — Social security wages', spbVal:'$42,100.00', taxVal:'(missing)'},
+      {name:'Box 4 — SS tax withheld', spbVal:'$2,610.20', taxVal:'(missing)'},
+    ]},
+  w2_metro_mspb:  {id:'w2_metro_mspb', name:'W-2 (2024)', gapType:'form-missing-spb',
+    spbVal:'(form missing)', taxVal:'Present in Tax Software',
+    fType:'form', cat:'wages', ent:'METRO TRANSIT INC.',
+    ifInputId: null,
+    formFields:[
+      {name:'Box 1 — Wages, tips, other comp.', spbVal:'(missing)', taxVal:'$28,500.00'},
+      {name:'Box 2 — Federal income tax withheld', spbVal:'(missing)', taxVal:'$3,200.00'},
+      {name:'Box 3 — Social security wages', spbVal:'(missing)', taxVal:'$28,500.00'},
+      {name:'Box 4 — SS tax withheld', spbVal:'(missing)', taxVal:'$1,767.00'},
+    ]},
+  // K-1 Reclass field gaps (use k1Reclass:true to redirect to K-1 Reclass window)
+  k1reclass1:{id:'k1reclass1',name:'Ordinary business income reclassification',gapType:'mismatch',
+    spbVal:'$5,400.00',taxVal:'$3,200.00',fType:'amount',cat:'k1',ent:'CHAPMAN IRREVOCABLE TRUST',
+    ifInputId:'k1r-ord',k1Reclass:true},
+  k1reclass2:{id:'k1reclass2',name:'Interest income allocation',gapType:'missing',
+    spbVal:'$2,800.00',taxVal:'(blank)',fType:'amount',cat:'k1',ent:'CHAPMAN IRREVOCABLE TRUST',
+    ifInputId:'k1r-int',k1Reclass:true},
+  k1miss: {id:'k1miss', name:'Schedule K-1 (2024)', gapType:'form-missing-spb',
+    spbVal:'(form missing)', taxVal:'Present in Tax Software',
+    fType:'form', cat:'k1', ent:'CHAPMAN IRREVOCABLE TRUST',
+    ifInputId: null,
+    formFields:[
+      {name:'Part II — Income, deductions, credits', spbVal:'(missing)', taxVal:'$8,200.00'},
+      {name:'Box 1 — Ordinary business income', spbVal:'(missing)', taxVal:'$5,400.00'},
+      {name:'Box 5 — Interest income', spbVal:'(missing)', taxVal:'$2,800.00'},
+    ]},
+  vg1099r: {id:'vg1099r', name:'1099-R (2024)', gapType:'form-missing-tax',
+    spbVal:'Present in SPbinder', taxVal:'(form missing)',
+    fType:'form', cat:'1099r', ent:'Vanguard Group',
+    ifInputId: null,
+    formFields:[
+      {name:'Box 1 — Gross distribution', spbVal:'$45,000.00', taxVal:'(missing)'},
+      {name:'Box 2a — Taxable amount', spbVal:'$45,000.00', taxVal:'(missing)'},
+      {name:'Box 4 — Federal income tax withheld', spbVal:'$9,000.00', taxVal:'(missing)'},
+    ]}
+};
+const CATEGORIES = [
+  {id:'wages',name:'W-2 Wages',icon:'ti-report-money'},{id:'dividends',name:'Dividends (1099-DIV)',icon:'ti-chart-line'},
+  {id:'interest',name:'Interest (1099-INT)',icon:'ti-percentage'},{id:'1099r',name:'1099-R Distributions',icon:'ti-building-bank'},{id:'k1',name:'Schedule K-1',icon:'ti-building'}
+];
+let S = {scenario:'SC1',binderMode:'none',wfVariant:'wf2',exportDone:false,exportCount:0,rerunCount:0,binderDirty:false,activeGapIds:[],edits:{},activeCat:null,activeField:null,lastRunTs:null,reconUnlocked:false,reconTabVisible:false,reconRunning:false,filter:'all'};
+function runScenario(key){
+  var sc=SCENARIOS[key];if(!sc)return;
+  document.querySelectorAll('.sc-btn').forEach(function(b){b.classList.remove('active');});
+  var btn=document.getElementById('sc-'+key);if(btn)btn.classList.add('active');
+  /* Clear all toasts */
+  var wrap=document.getElementById('spbToastWrap');if(wrap)wrap.innerHTML='';
+  /* Every scenario starts fresh — Export must happen first */
+  S={scenario:key,binderMode:BINDER_MODE,wfVariant:'wf2',fieldActions:{},
+     exportDone:false,exportCount:0,rerunCount:0,binderDirty:false,
+     activeGapIds:[],edits:{},activeCat:null,activeField:null,lastRunTs:null,
+     reconUnlocked:false,reconTabVisible:false,reconRunning:false,filter:'all'};
+  applyBinderMode(BINDER_MODE);
+  setReconMenuState(false);
+  updateViewResultsBtn();
+  if(sc.exportError){
+    setTimeout(function(){
+      showSpbToast({type:'error',title:'Export Error',msg:'Export failed on binder open. Reconciliation will not run automatically.',duration:0,id:'export-err-toast'});
+      setStatus('Export error. Reconciliation unavailable until export succeeds.');
+    },800);
+  } else {
+    setStatus('Scenario: '+sc.label+' — Click Export to Tax Software to begin.');
+  }
+}
+function getCurrentPane(){for(const p of ['forms','leads','notes','recon']){const t=document.getElementById('tab-'+p);if(t&&t.classList.contains('active'))return p;}return 'forms';}
+/* setReconMenuState → injected below */
+function openReconTab(){
+  if(!S.reconUnlocked) return;
+  if(!S.reconTabVisible){var _rt2=document.getElementById('tab-recon');if(_rt2){_rt2.classList.remove('hidden');S.reconTabVisible=true;}}
+  switchPane('recon');
+  // Pending data: show informational modal, then let user proceed to existing results
+  if(S.binderDirty){
+    showExportInfoModal(null); // null = no auto-action on dismiss, just show current state
+    // Still open the recon tab to last known state (idle or results)
+    if(S.rerunCount > 0){
+      // Results already exist — show them
+      showReconState('results');
+      if(S.activeCat) renderFieldTable(S.activeCat);
+      renderCategories(); updateStats();
+      if(typeof renderModeResolutionNote==='function') renderModeResolutionNote();
+    } else {
+      showReconState('idle');
+      updateIdleCTA();
+    }
+    setStatus('Export pending — export for accurate results. Showing last reconciliation data.');
+  } else {
+    showReconState('idle');
+    updateIdleCTA();
+  }
+}
+function formatTs(d){if(!d)return '\u2014';return d.toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true});}
+function updateLastRunDisplay(){const el=document.getElementById('lastRunDisplay');if(!el)return;el.innerHTML=S.lastRunTs?'<i class="ti ti-clock"></i> Last run: '+formatTs(S.lastRunTs):'';}
+function switchPane(id){['forms','leads','notes','recon'].forEach(p=>{const pn=document.getElementById('pane-'+p),tb=document.getElementById('tab-'+p);if(pn){pn.style.display='none';pn.classList.remove('active');}if(tb)tb.classList.remove('active');});const tp=document.getElementById('pane-'+id),tt=document.getElementById('tab-'+id);if(tp){tp.style.display='flex';tp.classList.add('active');}if(tt)tt.classList.add('active');}
+function initPanes(){['leads','notes','recon'].forEach(p=>{const pn=document.getElementById('pane-'+p);if(pn)pn.style.display='none';});document.getElementById('pane-forms').style.display='flex';document.getElementById('pane-forms').classList.add('active');(function(){var _e=document.getElementById('tab-forms');if(_e)_e.classList.add('active');})();applyBinderMode(S.binderMode||'classic');buildIfList('wages');}
+function renderCategories(){const list=document.getElementById('catList');list.innerHTML='';let tot=0;CATEGORIES.forEach(cat=>{const fields=S.activeGapIds.map(id=>ALL_FIELDS[id]).filter(f=>f&&f.cat===cat.id);const alive=fields.length;tot+=alive;const div=document.createElement('div');div.className='cat-item'+(S.activeCat===cat.id?' active':'');var hasFormMissing=fields.some(function(f){return f.gapType==='form-missing-spb'||f.gapType==='form-missing-tax';});
+    let bdg=alive>0?'<div class="cbdg has'+(alive<=2?' w':'')+'">'+alive+'</div>':'<div class="cbdg none"><i class="ti ti-check" style="font-size:9px"></i></div>';
+    if(hasFormMissing&&alive>0){div.title='Includes missing form(s)';}div.innerHTML='<i class="ti '+cat.icon+' ci"></i><div class="cat-info"><div class="cat-name">'+cat.name+'</div><div class="cat-sub">'+alive+' gap'+(alive!==1?'s':'')+'</div></div>'+bdg;div.onclick=()=>selectCat(cat.id);list.appendChild(div);});document.getElementById('catCountLbl').textContent=tot+' total';}
+function selectCat(catId){S.activeCat=catId;S.activeField=null;renderCategories();renderFieldTable(catId);buildIfList(catId);}
+
+function setFilter(f){
+  S.filter=f;
+  ['All','Missing','Mismatch'].forEach(n=>{
+    const b=document.getElementById('f'+n);
+    if(b) b.classList.toggle('act', n.toLowerCase()===f);
+  });
+  if(S.activeCat) renderFieldTable(S.activeCat);
+}
+
+
+function renderFieldTable(catId){
+  var list=document.getElementById('fieldList');
+  list.innerHTML='';
+  if(!S.fieldActions) S.fieldActions={};
+
+  var allCatFields=S.activeGapIds.map(function(id){return ALL_FIELDS[id];}).filter(function(f){return f&&f.cat===catId;});
+
+  // Split: active (not suppressed by action on THIS run) vs suppressed
+  // A field is suppressed if it has an action AND is in the current gap list (same gap found again)
+  var activeCatFields=allCatFields.filter(function(f){return !S.fieldActions[f.id];});
+  var suppressedCatFields=allCatFields.filter(function(f){return !!S.fieldActions[f.id];});
+
+  var fields=activeCatFields.filter(function(f){
+    if(S.filter==='all') return true;
+    if(S.filter==='missing') return f.gapType==='missing'||f.gapType==='form-missing-spb'||f.gapType==='form-missing-tax';
+    if(S.filter==='mismatch') return f.gapType==='mismatch';
+    return false;
+  });
+
+  if(!fields.length && !suppressedCatFields.length && allCatFields.length){
+    list.innerHTML='<div style="padding:14px;color:var(--g3);font-size:11px;text-align:center"><i class="ti ti-filter-off" style="font-size:22px;display:block;margin:0 auto 7px;color:var(--g2)"></i>No fields match this filter.</div>';
+    document.getElementById('fieldCountLbl').textContent='0 of '+allCatFields.length;
+    return;
+  }
+  if(!fields.length && !suppressedCatFields.length){
+    list.innerHTML='<div style="padding:16px;color:var(--g3);font-size:11px;text-align:center"><i class="ti ti-circle-check" style="font-size:28px;color:#5ee8a8;display:block;margin:0 auto 8px"></i>No gaps in this category</div>';
+    document.getElementById('fieldCountLbl').textContent='no gaps';
+    return;
+  }
+
+  var isClassic   = S.binderMode==='classic';
+  var isSimplified= S.binderMode==='simplified';
+  var isNone      = S.binderMode==='none';
+
+  // ── Mode note banner (Simplified / None) ─────────────────────────────────
+  if((isSimplified||isNone) && fields.length){
+    var nb=document.createElement('div');
+    nb.style.cssText='margin:10px 10px 4px;padding:11px 14px;background:'+(isSimplified?'#eaf5ee':'#f3eafd')+';border:1px solid '+(isSimplified?'#a8d8b8':'#c8a8e8')+';border-radius:6px;font-size:12px';
+    var nIcon=isSimplified?'ti-arrows-transfer-down':'ti-file-plus';
+    var nColor=isSimplified?'#1a7a45':'#6b3fa0';
+    var nTitle=isSimplified?'Import TR required to resolve these gaps':'Add Documents to resolve these gaps';
+    var nBody=isSimplified
+      ?'In Simplified Leadsheets mode, gaps are resolved by the <b>Import TR</b> process. Once complete, re-export and reconcile again.'
+      :'In None Leadsheets mode, gaps are resolved by completing the <b>Add Documents</b> process. Once documents are added, re-export and reconcile again.';
+    nb.innerHTML='<div style="display:flex;align-items:flex-start;gap:9px"><i class="ti '+nIcon+'" style="font-size:16px;color:'+nColor+';flex-shrink:0;margin-top:1px"></i><div><b style="display:block;color:'+nColor+';margin-bottom:4px">'+nTitle+'</b><span style="color:var(--txt2);line-height:1.5">'+nBody+'</span></div></div>';
+    list.appendChild(nb);
+  }
+
+  // ── Form-missing cards ────────────────────────────────────────────────────
+  var formGaps  = fields.filter(function(f){return f.gapType==='form-missing-spb'||f.gapType==='form-missing-tax';});
+  var fieldGaps = fields.filter(function(f){return f.gapType!=='form-missing-spb'&&f.gapType!=='form-missing-tax';});
+
+  formGaps.forEach(function(f){
+    var isMissingInSpb=f.gapType==='form-missing-spb';
+    var accentColor=isMissingInSpb?'#c0392b':'#c67d00';
+    var bgColor=isMissingInSpb?'#fef5f5':'#fffbf0';
+    var borderColor=isMissingInSpb?'#f0c0c0':'#f0d8a0';
+    var cardId='fmcard-'+f.id;
+    var card=document.createElement('div');
+    card.style.cssText='margin:8px 10px;border:1px solid '+borderColor+';border-radius:7px;overflow:hidden;background:'+bgColor;
+
+    var statusLabel=isMissingInSpb
+      ?'<span style="background:#fcecea;color:#c0392b;border:1px solid #f0c0c0;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700">Missing in SPbinder</span>'
+      :'<span style="background:#fff3dc;color:#c67d00;border:1px solid #f0d8a0;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700">Missing in Tax Software</span>';
+    var whereText=isMissingInSpb
+      ?'Present in GoSystem Tax RS &mdash; not found in SPbinder'
+      :'Present in SPbinder &mdash; not yet in GoSystem Tax RS';
+
+    var isAcked=S.fieldActions[f.id]==='acknowledged';
+    var isIgnored=S.fieldActions[f.id]==='ignored';
+
+    var hdr=document.createElement('div');
+    hdr.style.cssText='padding:10px 14px;background:'+bgColor+';border-bottom:1px solid '+borderColor+';display:flex;align-items:flex-start;justify-content:space-between;gap:8px';
+    hdr.innerHTML=
+      '<div style="display:flex;align-items:flex-start;gap:9px;cursor:pointer" onclick="toggleFormCard(\''+cardId+'\')">'+
+        '<i class="ti ti-file-description" style="font-size:18px;color:'+accentColor+';flex-shrink:0;margin-top:2px"></i>'+
+        '<div>'+
+          '<div style="font-weight:700;font-size:13px;color:'+accentColor+'">'+f.ent+'</div>'+
+          '<div style="font-size:11px;color:var(--txt2);margin-top:2px">'+f.name+' &nbsp;&middot;&nbsp; '+whereText+'</div>'+
+          '<div style="margin-top:5px;display:flex;align-items:center;gap:6px">'+statusLabel+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div style="display:flex;align-items:center;gap:5px;flex-shrink:0">'+
+        '<button class="ai-btn ai-ack'+(isAcked?' active':'')+'" onclick="setFieldAction(\''+f.id+'\',\'acknowledged\')" title="Acknowledge: hide from next run if gap persists"><i class="ti ti-check" style="font-size:10px"></i>Acknowledge</button>'+
+        '<button class="ai-btn ai-ign'+(isIgnored?' active':'')+'" onclick="setFieldAction(\''+f.id+'\',\'ignored\')" title="Ignore: hide from next run if gap persists"><i class="ti ti-eye-off" style="font-size:10px"></i>Ignore</button>'+
+        '<i class="ti ti-chevron-down" id="chev-'+cardId+'" style="font-size:14px;color:var(--g3);flex-shrink:0;margin-top:3px;transition:transform .2s;cursor:pointer" onclick="toggleFormCard(\''+cardId+'\')"></i>'+
+      '</div>';
+
+    var body=document.createElement('div');
+    body.id=cardId;body.style.cssText='display:none';
+
+    var subTable='<table style="width:100%;border-collapse:collapse;font-size:11px">'+
+      '<thead><tr>'+
+        '<th style="padding:6px 14px;background:#f5f6f8;text-align:left;font-size:10px;font-weight:700;color:var(--navy);border-bottom:1px solid var(--bdr)">Field</th>'+
+        '<th style="padding:6px 10px;background:#f5f6f8;text-align:right;font-size:10px;font-weight:700;color:var(--navy);border-bottom:1px solid var(--bdr)">SPbinder</th>'+
+        '<th style="padding:6px 10px;background:#f5f6f8;text-align:right;font-size:10px;font-weight:700;color:var(--navy);border-bottom:1px solid var(--bdr)">Tax Software</th>'+
+      '</tr></thead><tbody>';
+    if(f.formFields&&f.formFields.length){
+      f.formFields.forEach(function(ff){
+        var sm=ff.spbVal==='(missing)',tm=ff.taxVal==='(missing)';
+        subTable+='<tr><td style="padding:6px 14px;border-bottom:1px solid #f0f0f0">'+ff.name+'</td>'+
+          '<td style="padding:6px 10px;text-align:right;border-bottom:1px solid #f0f0f0;color:'+(sm?'var(--g3)':'var(--blue)')+'">'+ff.spbVal+'</td>'+
+          '<td style="padding:6px 10px;text-align:right;border-bottom:1px solid #f0f0f0;color:'+(tm?'var(--g3)':'var(--red)')+'">'+ff.taxVal+'</td></tr>';
+      });
+    }
+    subTable+='</tbody></table>';
+
+    var ctaHtml='';
+    if(isClassic){
+      ctaHtml=isMissingInSpb
+        ?'<div style="padding:10px 14px;border-top:1px solid '+borderColor+'"><button class="goto-btn" data-fid="'+f.id+'" style="background:var(--blue)"><i class="ti ti-file-plus"></i> Go To Input Form &mdash; Add this form</button><div style="margin-top:6px;font-size:11px;color:var(--g3)">Directed to the '+f.ent+' form category. Click Add to create the form.</div></div>'
+        :'<div style="padding:10px 14px;border-top:1px solid '+borderColor+'"><div style="display:flex;align-items:flex-start;gap:8px;padding:9px 12px;background:#fff;border:1px solid var(--bdr);border-radius:5px"><i class="ti ti-upload" style="color:var(--blue);font-size:15px;flex-shrink:0;margin-top:1px"></i><div><b style="font-size:12px;color:var(--navy)">Re-export to resolve</b><div style="font-size:11px;color:var(--txt2);margin-top:2px">This form is already in SPbinder. Re-export to push it to GoSystem Tax RS.</div></div></div></div>';
+    } else if(isSimplified){
+      ctaHtml='<div style="padding:10px 14px;border-top:1px solid '+borderColor+'"><div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#1a7a45;font-weight:600"><i class="ti ti-arrows-transfer-down" style="font-size:13px"></i>'+(isMissingInSpb?'Run Import TR to import this form into SPbinder':'Run Import TR to sync this form to Tax Software')+'</div></div>';
+    } else {
+      ctaHtml='<div style="padding:10px 14px;border-top:1px solid '+borderColor+'"><div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#6b3fa0;font-weight:600"><i class="ti ti-file-plus" style="font-size:13px"></i>'+(isMissingInSpb?'Add Documents to add this form to SPbinder':'Add Documents process will sync this form to Tax Software')+'</div></div>';
+    }
+
+    body.innerHTML=subTable+ctaHtml;
+    card.appendChild(hdr);card.appendChild(body);list.appendChild(card);
+  });
+
+  list.addEventListener('click',function(e){
+    var btn=e.target.closest('.goto-btn[data-fid]');
+    if(btn){var f=ALL_FIELDS[btn.dataset.fid];if(f&&isClassic)goToInputFormDirect(f);}
+  });
+
+  if(!fieldGaps.length && !suppressedCatFields.length){
+    document.getElementById('fieldCountLbl').textContent=formGaps.length+' form'+(formGaps.length!==1?'s':'')+' missing';
+    return;
+  }
+
+  // ── Field gap table ───────────────────────────────────────────────────────
+  if(fieldGaps.length){
+    var showAction=isClassic;
+    var table=document.createElement('table');
+    table.className='rtable';
+    table.innerHTML='<thead><tr>'+
+      '<th style="width:32%">Field</th>'+
+      '<th style="width:11%">Type</th>'+
+      '<th style="width:'+(showAction?'16%':'21%')+'">SPbinder</th>'+
+      '<th style="width:'+(showAction?'16%':'21%')+'">Tax Software</th>'+
+      '<th style="width:'+(showAction?'25%':'15%')+'">'+(showAction?'Action':'Status')+'</th>'+
+      '</tr></thead>';
+    var tbody=document.createElement('tbody');
+
+    var ents={};
+    fieldGaps.forEach(function(f){if(!ents[f.ent])ents[f.ent]=[];ents[f.ent].push(f);});
+
+    Object.entries(ents).forEach(function(entry){
+      var ent=entry[0],fs=entry[1];
+      var er=document.createElement('tr');er.className='ent-row';
+      er.innerHTML='<td colspan="5"><i class="ti ti-building" style="font-size:10px;margin-right:3px"></i>'+ent+'</td>';
+      tbody.appendChild(er);
+
+      fs.forEach(function(f){
+        var isEdited=!!S.edits[f.id];
+        var isAcked=S.fieldActions[f.id]==='acknowledged';
+        var isIgnored=S.fieldActions[f.id]==='ignored';
+        var tr=document.createElement('tr');
+        if(S.activeField===f.id) tr.classList.add('row-active');
+
+        var chip=isEdited
+          ?'<span class="gchip edited">Edited</span>'
+          :'<span class="gchip '+f.gapType+'">'+(f.gapType==='missing'?'Missing':'Mismatch')+'</span>';
+
+        var spbDisplay=isEdited?S.edits[f.id]:f.spbVal;
+        var isMissingTax=f.taxVal==='(blank)'||f.taxVal==='(missing)';
+
+        var tdField=document.createElement('td');tdField.className='fn';tdField.innerHTML=f.name+'<div class="sub">'+ent+'</div>';
+        var tdChip=document.createElement('td');tdChip.innerHTML=chip;
+        var tdSpb=document.createElement('td');tdSpb.style.cssText='font-size:11px;color:'+(isEdited?'var(--green)':'var(--blue)');tdSpb.textContent=spbDisplay;
+        var tdTax=document.createElement('td');tdTax.style.cssText='font-size:11px;color:'+(isMissingTax?'var(--g3)':'var(--red)');tdTax.textContent=f.taxVal;
+        var tdAct=document.createElement('td');
+
+        if(showAction){
+          // Classic: Go To Input Form + Ack/Ignore
+          tdAct.innerHTML='<div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">'+
+            '<button class="goto-btn" data-fid="'+f.id+'"><i class="ti ti-arrow-bar-right"></i> Go To Input Form</button>'+
+            '<button class="ai-btn ai-ack'+(isAcked?' active':'')+'" onclick="setFieldAction(\''+f.id+'\',\'acknowledged\')" title="Acknowledge: suppress if same gap found again"><i class="ti ti-check" style="font-size:10px"></i>Ack</button>'+
+            '<button class="ai-btn ai-ign'+(isIgnored?' active':'')+'" onclick="setFieldAction(\''+f.id+'\',\'ignored\')" title="Ignore: suppress if same gap found again"><i class="ti ti-eye-off" style="font-size:10px"></i>Ign</button>'+
+          '</div>';
+        } else {
+          // Simplified/None: only Ack/Ignore, no goto
+          tdAct.innerHTML='<div style="display:flex;align-items:center;gap:4px">'+
+            '<button class="ai-btn ai-ack'+(isAcked?' active':'')+'" onclick="setFieldAction(\''+f.id+'\',\'acknowledged\')" title="Acknowledge this gap"><i class="ti ti-check" style="font-size:10px"></i>Acknowledge</button>'+
+            '<button class="ai-btn ai-ign'+(isIgnored?' active':'')+'" onclick="setFieldAction(\''+f.id+'\',\'ignored\')" title="Ignore this gap"><i class="ti ti-eye-off" style="font-size:10px"></i>Ignore</button>'+
+          '</div>';
+        }
+
+        tr.appendChild(tdField);tr.appendChild(tdChip);tr.appendChild(tdSpb);tr.appendChild(tdTax);tr.appendChild(tdAct);
+        tbody.appendChild(tr);
+      });
+    });
+
+    table.appendChild(tbody);list.appendChild(table);
+
+    table.addEventListener('click',function(e){
+      var btn=e.target.closest('.goto-btn');
+      if(btn&&btn.dataset.fid&&isClassic){var f=ALL_FIELDS[btn.dataset.fid];if(f)goToInputFormDirect(f);}
+    });
+  }
+
+  // ── Suppressed (Acknowledged/Ignored) section ────────────────────────────
+  if(suppressedCatFields.length){
+    var supSec=document.createElement('div');supSec.className='suppressed-section';
+    var supId='sup-'+catId;
+    supSec.innerHTML='<div class="suppressed-hdr" onclick="toggleSup(\''+supId+'\')" id="suph-'+supId+'">'+
+      '<i class="ti ti-eye-off" style="font-size:12px"></i>'+
+      suppressedCatFields.length+' suppressed gap'+(suppressedCatFields.length!==1?'s':'')+
+      ' (acknowledged/ignored) &nbsp;<i class="ti ti-chevron-down" id="supc-'+supId+'" style="font-size:11px;transition:transform .18s"></i>'+
+    '</div>'+
+    '<div id="'+supId+'" style="display:none"></div>';
+
+    var supBody=supSec.querySelector('#'+supId);
+    suppressedCatFields.forEach(function(f){
+      var action=S.fieldActions[f.id];
+      var row=document.createElement('div');row.className='suppressed-row';
+      row.innerHTML=
+        '<span style="flex:1;font-size:11px;color:var(--txt2)">'+f.name+'<span style="color:var(--g3);margin-left:4px;font-size:10px">'+f.ent+'</span></span>'+
+        '<span class="sup-tag '+(action==='acknowledged'?'ack':'ign')+'">'+(action==='acknowledged'?'Acknowledged':'Ignored')+'</span>'+
+        '<span style="font-size:10px;color:var(--g3);margin:0 6px">SPbinder: '+f.spbVal+' &nbsp;/&nbsp; Tax SW: '+f.taxVal+'</span>'+
+        '<button class="sup-undo" onclick="undoFieldAction(\''+f.id+'\')"><i class="ti ti-rotate-left" style="font-size:10px"></i> Restore</button>';
+      supBody.appendChild(row);
+    });
+    list.appendChild(supSec);
+  }
+
+  var activeCount=fields.length;
+  var totalCount=allCatFields.length;
+  document.getElementById('fieldCountLbl').textContent=
+    activeCount+(totalCount!==activeCount?' of '+totalCount:'')+
+    ' field'+(activeCount===1?'':'s')+
+    (suppressedCatFields.length?' (+'+suppressedCatFields.length+' suppressed)':'');
+}
+
+function toggleSup(id){
+  var el=document.getElementById(id),chev=document.getElementById('supc-'+id);
+  var open=el&&el.style.display==='block';
+  if(el)el.style.display=open?'none':'block';
+  if(chev)chev.style.transform=open?'':'rotate(180deg)';
+}
+
+function selectField(f){
+  // Just store the field — col3 removed, no detail panel to update
+  S.activeField = f.id;
+  S.gotoField   = f;
+  renderFieldTable(S.activeCat);
+}
+
+function updateStats(){const gaps=S.activeGapIds.length,edited=S.activeGapIds.filter(id=>S.edits[id]).length;document.getElementById('statGaps').textContent=gaps;document.getElementById('statReady').textContent=edited;const eb=document.getElementById('reconExpBtn');if(eb)eb.disabled=(edited===0);const bdg=document.getElementById('reconBadge'),mBdg=document.getElementById('reconMenuBadge');if(gaps>0){if(bdg){bdg.style.display='inline-flex';bdg.textContent=gaps;bdg.classList.remove('hidden');}if(mBdg){mBdg.style.display='inline-flex';mBdg.textContent=gaps;mBdg.classList.remove('hidden');}}else{if(bdg)bdg.classList.add('hidden');if(mBdg)mBdg.classList.add('hidden');}}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');if(id==='exportModal')resetExportModal();}
+function resetExportModal(){document.getElementById('exportModalBody').innerHTML='<p style="font-size:12px;color:var(--txt2);margin-bottom:12px;line-height:1.6">Export all SPbinder data to GoSystem Tax RS. Reconciliation runs automatically in the background after export.</p><div style="background:var(--amber-lt);border:1px solid #e0c070;border-radius:3px;padding:7px 10px;font-size:11px;color:#7a5000;display:flex;gap:6px"><i class="ti ti-alert-triangle" style="color:var(--amber);flex-shrink:0;margin-top:1px"></i><span>Ensure all required fields are complete before exporting.</span></div>';document.getElementById('exportModalFtr').innerHTML='<button class="mbtn ghost" onclick="closeModal(\'exportModal\')">Cancel</button><button class="mbtn primary" onclick="startExport()"><i class="ti ti-upload"></i> Proceed with Export</button>';}
+function startExport(){document.getElementById('exportModalBody').innerHTML='<div class="exp-steps"><div class="exp-step active" id="es1"><i class="ti ti-loader spin"></i><span>Connecting to GoSystem Tax RS\u2026</span></div><div class="exp-step pending" id="es2"><i class="ti ti-clock"></i><span>Validating &amp; sending fields\u2026</span></div><div class="exp-step pending" id="es3"><i class="ti ti-clock"></i><span>Exporting corrections\u2026</span></div><div class="exp-step pending" id="es4"><i class="ti ti-clock"></i><span>Finalizing\u2026</span></div></div><div class="exp-prog"><div class="exp-prog-bar" id="expBar" style="width:0%"></div></div><div style="font-size:11px;color:var(--g3);text-align:center;margin-top:4px" id="expStatus">Starting\u2026</div>';document.getElementById('exportModalFtr').innerHTML='<button class="mbtn ghost" onclick="closeModal(\'exportModal\')">Close</button>';let step=0;const steps=[{id:'es1',pct:25,msg:'Sending income data\u2026',next:'es2'},{id:'es2',pct:55,msg:'Sending deductions\u2026',next:'es3'},{id:'es3',pct:80,msg:'Finalizing\u2026',next:'es4'},{id:'es4',pct:100,msg:'Export complete!',next:null}];function tick(){const s=steps[step],el=document.getElementById(s.id);if(el){el.className='exp-step done';el.querySelector('i').className='ti ti-circle-check';}const bar=document.getElementById('expBar');if(bar)bar.style.width=s.pct+'%';const st=document.getElementById('expStatus');if(st)st.textContent=s.msg;if(s.next){const nx=document.getElementById(s.next);if(nx){nx.className='exp-step active';nx.querySelector('i').className='ti ti-loader spin';}}step++;if(step<steps.length)setTimeout(tick,900);else finishExport();}setTimeout(tick,600);}
+function finishExport(){
+  const st=document.getElementById('expStatus');
+  // Auto-export of forms missing in Tax SW: only after at least one reconciliation has run
+  // On first export (rerunCount===0) this does NOT apply — reconciliation hasn't run yet
+  var autoExportedForms = (S.rerunCount > 0)
+    ? S.activeGapIds.map(function(id){return ALL_FIELDS[id];}).filter(function(f){return f && f.gapType==='form-missing-tax';})
+    : [];
+  var autoMsg = autoExportedForms.length
+    ? ' ('+autoExportedForms.length+' form'+(autoExportedForms.length>1?'s':'')+' auto-exported to Tax Software)'
+    : '';
+  if(st){st.textContent='Export complete'+autoMsg+' — All available data exported to GoSystem Tax RS.';st.style.color='var(--green)';st.style.fontWeight='700';}
+  document.getElementById('exportModalFtr').innerHTML='<button class="mbtn primary" onclick="onExportClose()"><i class="ti ti-check"></i> Done</button>';
+  S.exportDone=true;S.exportCount++;S.binderDirty=false;
+  S.reconUnlocked=true;
+  setReconMenuState(true);
+  var _tr=document.getElementById('tab-recon'); if(_tr) _tr.classList.remove('warn-ind');
+  var _tf=document.getElementById('tab-forms'); if(_tf) _tf.classList.remove('warn-ind');
+  const j=JOURNEYS[S.journey];
+  if(S.exportCount===1){S.activeGapIds=j.initialGaps.slice();}
+  else{S.activeGapIds=j.remainingAfterFix.slice();}
+  S.edits={};
+  renderCategories();updateStats();
+}
+
+function onExportClose(){
+  closeModal('exportModal');
+  showSpbToast({type:'success',title:'Export Completed Successfully',msg:'Your binder data has been exported to GoSystem Tax RS.',duration:8000,id:'export-success-toast'});
+  S.exportDone=true;S.exportCount++;S.binderDirty=false;S.reconUnlocked=true;
+  var sc=SCENARIOS[S.scenario]||{};
+  /* AUTO reconciliation always runs after export — every scenario */
+  setReconMenuState(true);
+  if(sc.dirtyWarning){
+    /* After auto recon completes, binder will be marked dirty to demonstrate export-pending scenario */
+    S._markDirtyAfterRecon=true;
+  }
+  setStatus('Export complete. Reconciliation running in background…');
+  startReconSilent();
+  updateViewResultsBtn();
+}
+
+/* showBgToast → injected below */
+/* hideBgToast → injected below */
+function showRerunModal(){
+  /* dirty path → export pending info modal; otherwise run directly */
+  if(S.binderDirty){showExportPendingInfo();return;}
+  if(!S.reconUnlocked||S.reconRunning) return;
+  doRerun();
+}
+function doRerun(){
+  // Reset any stale running state
+  S.reconRunning = false;
+  S.activeCat = null;
+  S.activeField = null;
+  var catList = document.getElementById('catList');
+  if(catList) catList.innerHTML = '';
+  var fieldList = document.getElementById('fieldList');
+  if(fieldList) fieldList.innerHTML = '<div style="padding:16px;color:var(--g3);font-size:11px;text-align:center"><i class="ti ti-arrow-left" style="font-size:24px;display:block;margin:0 auto 8px;color:var(--g2)"></i>Select a category</div>';
+  // Remove stale resolution note if present
+  var mn = document.getElementById('modeResolutionNote');
+  if(mn) mn.remove();
+  startReconciliation();
+}
+
+function startRerun(){doRerun();}
+function startRerunBackground(showOverlay){ startReconciliation(); }
+function dismissRerunOverlay(){document.getElementById('rerunOverlay').classList.remove('show');showBgToast('Reconciliation still running in background\u2026');}
+function finishRerun(){
+  S.reconRunning=false;
+  document.getElementById('rerunProgBar').style.width='100%';
+  document.querySelectorAll('.rs').forEach(function(r){r.classList.remove('active');r.classList.add('done');var i=r.querySelector('i');if(i)i.className='ti ti-circle-check';});
+  document.getElementById('rerunMsg').textContent='Reconciliation complete.';
+  S.lastRunTs=new Date();S.rerunCount++;updateLastRunDisplay();
+  setReconRunning(false);
+  setTimeout(function(){
+    document.getElementById('rerunOverlay').classList.remove('show');
+    var sc=SCENARIOS[S.scenario]||{};
+    if(sc.forceError){_showReconError();updateViewResultsBtn();return;}
+    S.activeGapIds=sc.initialGaps?sc.initialGaps.slice():[];
+    _showReconResult(S.activeGapIds.length>0);
+    updateViewResultsBtn();
+  },800);
+}
+function showBanner(txt,type){
+  var toastType=type==='success'?'success':type==='err'?'error':'warning';
+  showSpbToast({type:toastType,title:txt,duration:type==='success'?8000:0,id:'banner-toast'});
+}
+function closeBanner(e){if(e&&e.stopPropagation)e.stopPropagation();document.getElementById('banner').classList.remove('show');}
+function closeBannerSilent(){document.getElementById('banner').classList.remove('show');}
+function onBannerClick(){if(S.reconUnlocked)openReconTab();}
+function setStatus(m){const el=document.getElementById('statusMsg');if(el)el.textContent=m;}
+function onFI(elId,fieldId,val){
+  if(val&&val.trim()){S.edits[fieldId]=val.trim();S.binderDirty=true;}else delete S.edits[fieldId];
+  const el=document.getElementById(elId);if(el)el.style.borderColor='var(--teal)';
+  updateStats();if(S.activeCat)renderFieldTable(S.activeCat);renderCategories();
+  // Update edited badge in col3 if this field is selected
+  if(S.activeField===fieldId){
+    /* epEditedBadge removed */
+  }
+  var _tfw=document.getElementById('tab-forms'); if(_tfw) _tfw.classList.add('warn-ind');
+  setStatus('Auto-saved. Export pending.');setTimeout(()=>setStatus('All changes saved.'),2000);
+}
+
+const IF_DATA={
+  wages:{hdr:'W-2',entries:['WHYNOT STOP INC. (T)','US BANK NATIONAL ASSOC. (T)','ghg (T)'],sections:['W-2','Days Worked - Foreign','Foreign Earned Income','Non-W-2 (FEC)'],catnav:['W-2','General Info','E-File','Income','Gains & Losses','Adjustments','Taxes'],activeEntry:0,activeSection:0},
+  dividends:{hdr:'1099-DIV',entries:['Fidelity Investments (T)','Vanguard Brokerage (T)'],sections:['1099-DIV','Foreign Dividends'],catnav:['1099-DIV','General Info','Income'],activeEntry:0,activeSection:0},
+  interest:{hdr:'1099-INT',entries:['Chase Bank NA (T)','Wells Fargo (T)'],sections:['1099-INT','Foreign Interest'],catnav:['1099-INT','General Info','Income'],activeEntry:0,activeSection:0},
+  '1099r':{hdr:'1099-R',entries:['Vanguard Group (T)','Fidelity Rollover (T)'],sections:['1099-R','State'],catnav:['1099-R','General Info','Income'],activeEntry:0,activeSection:0},
+  k1:{hdr:'Schedule K-1',entries:['Chapman Irrevocable Trust (T)'],sections:['Activity Info','Income/Loss','Credits'],catnav:['Schedule K-1','Income','Deductions'],activeEntry:0,activeSection:0}
+};
+function buildIfList(catId){
+  const d=IF_DATA[catId]||IF_DATA['wages'];
+  document.getElementById('ifListHdr').textContent=d.hdr;
+  const entries=document.getElementById('ifEntries');
+  entries.innerHTML=d.entries.map((e,i)=>'<div class="if-entry'+(i===d.activeEntry?' sel':'')+'" onclick="selIfEntry(this,\''+e+'\',\''+catId+'\')"><i class="ti ti-file"></i>'+e+'</div>').join('');
+  const secs=document.getElementById('sectionsScroll');
+  secs.innerHTML='<div class="sec-hdr">&#9660; Sections</div>'+d.sections.map((s,i)=>'<div class="sec-item'+(i===d.activeSection?' sel':'')+'" onclick="selIfSection(this)">'+s+'</div>').join('');
+  const nav=document.getElementById('ifCatNav');
+  nav.innerHTML='<button class="if-catbtn">&larr;</button>'+d.catnav.map((c,i)=>'<button class="if-catbtn'+(i===0?' active':'')+'" onclick="selIfCat(this)">'+c+'</button>').join('')+'<button class="if-catbtn">&rarr;</button>';
+  const entryName=d.entries[d.activeEntry];
+  document.getElementById('entryName').textContent=entryName;
+  buildMainForm(catId,null);
+}
+function selIfEntry(el,name,catId){document.querySelectorAll('.if-entry').forEach(e=>e.classList.remove('sel'));el.classList.add('sel');document.getElementById('entryName').textContent=name;buildMainForm(catId,null);}
+function selIfSection(el){document.querySelectorAll('.sec-item').forEach(e=>e.classList.remove('sel'));el.classList.add('sel');}
+function selIfCat(el){document.querySelectorAll('.if-catbtn').forEach(e=>e.classList.remove('active'));el.classList.add('active');}
+
+// ══════════════════════════════════════════════════════════
+// FORM BUILDERS
+// ══════════════════════════════════════════════════════════
+
+
+
+
+
+function buildMainForm(catId,hlFieldId){
+  const main=document.getElementById('mainFormContent');
+  const side=document.getElementById('mainFormSide');
+  main.innerHTML=buildFormHTML(catId,hlFieldId,'main');
+  side.innerHTML=buildFormSide(catId);
+  // Show gap detail panel if navigated from Reconciliation
+  if(hlFieldId){
+    renderGapNavPanel(catId, hlFieldId);
+  } else {
+    var gp=document.getElementById('gapNavPanel');
+    if(gp) gp.style.display='none';
+  }
+}
+
+function renderGapNavPanel(catId, hlFieldId){
+  var panel=document.getElementById('gapNavPanel');
+  if(!panel) return;
+  // Get all active gaps for this category (excluding suppressed)
+  var catGaps=S.activeGapIds
+    .map(function(id){return ALL_FIELDS[id];})
+    .filter(function(f){
+      return f && f.cat===catId &&
+             f.gapType!=='form-missing-spb' && f.gapType!=='form-missing-tax' &&
+             (!S.fieldActions||!S.fieldActions[f.id]);
+    });
+  if(!catGaps.length){panel.style.display='none';return;}
+  var currentIdx=catGaps.findIndex(function(f){return f.ifInputId===hlFieldId||f.id===hlFieldId;});
+  var html='<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">';
+  html+='<span style="font-size:11px;font-weight:700;color:var(--navy)"><i class="ti ti-list-details" style="font-size:13px;color:var(--blue)"></i> Gaps in this form:</span>';
+  catGaps.forEach(function(f,i){
+    var isActive=f.ifInputId===hlFieldId||f.id===hlFieldId;
+    var isEdited=!!S.edits[f.id];
+    var chip=isEdited?'edited':f.gapType;
+    var chipLbl=isEdited?'Edited':f.gapType==='missing'?'Missing':'Mismatch';
+    html+='<button onclick="goToInputFormDirect(\''+f.id+'\')" style="'+
+      'height:24px;padding:0 10px;border-radius:12px;cursor:pointer;font-size:10px;font-weight:700;'+
+      'border:1px solid '+(isActive?'var(--blue)':'var(--bdr)')+';'+
+      'background:'+(isActive?'var(--blue)':'var(--g0)')+';'+
+      'color:'+(isActive?'#fff':'var(--txt2)')+';'+
+      'display:inline-flex;align-items:center;gap:4px">'+
+      '<span class="gchip '+chip+'" style="font-size:9px;padding:1px 5px">'+chipLbl+'</span>'+
+      f.name.split('—').pop().trim().substring(0,28)+
+    '</button>';
+  });
+  html+='</div>';
+  // Show values for the currently active gap inline below the nav
+  if(currentIdx>=0){
+    var activeGap=catGaps[currentIdx];
+    var isEdit=!!S.edits[activeGap.id];
+    var detailHtml='<div style="margin-top:6px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'+
+      '<span style="font-size:10px;color:var(--g3)">Field '+(currentIdx+1)+' of '+catGaps.length+' &nbsp;&middot;&nbsp; Click any gap to jump to it</span>'+
+      '<span style="font-size:11px;font-weight:600;color:var(--navy)">'+activeGap.name+'</span>'+
+      '<span style="font-size:11px">SPbinder: <b style="color:var(--blue)">'+(isEdit?S.edits[activeGap.id]:activeGap.spbVal)+'</b></span>'+
+      '<span style="font-size:11px">Tax SW: <b style="color:var(--red)">'+activeGap.taxVal+'</b></span>'+
+    '</div>';
+    html+=detailHtml;
+  } else {
+    html+='<div style="margin-top:6px;font-size:11px;color:var(--g3)">Click any gap above to jump directly to that field.</div>';
+  }
+  panel.innerHTML=html;
+  panel.style.display='block';
+}
+
+// buildEpForm removed — col3 panel removed
+function buildEpForm(f){ /* no-op — col3 removed */ }
+
+function selEpCat(el){ /* no-op */ }
+
+function buildFormHTML(catId,hlFieldId,ctx){
+  if(catId==='wages')return buildW2Form(hlFieldId,ctx);
+  if(catId==='dividends')return buildDivForm(hlFieldId,ctx);
+  if(catId==='interest')return buildIntForm(hlFieldId,ctx);
+  if(catId==='1099r')return build1099RForm(hlFieldId,ctx);
+  if(catId==='k1')return buildK1Form(hlFieldId,ctx);
+  return '<p style="font-size:11px;color:var(--g3);padding:8px">Select a field to open its input form.</p>';
+}
+function inp(id,val,type,w,ctx,hlId){
+  const isHl=(id&&hlId&&(id===hlId||(hlId==='ff-b1'&&id==='ff-b1')||(hlId&&id===hlId)));
+  // for ctx=ep use a unique id suffix
+  const eid=ctx==='ep'?'ep-'+id:id;
+  const hl=isHl?' hl':'';
+  const hlNote=isHl?'<div class="ff-hl-note"><i class="ti ti-alert-triangle"></i> Gap &mdash; fix here</div>':'';
+  return {id:eid,hl,hlNote};
+}
+function spbNum(fieldId){
+  // Return numeric string from SPbinder value (strip $, commas) or edited value
+  if(S.edits[fieldId]) return S.edits[fieldId];
+  const f=ALL_FIELDS[fieldId]; if(!f) return '';
+  const v=f.spbVal; if(!v||v==='(blank)'||v==='(deleted)') return '';
+  return v.replace(/[$,]/g,'');
+}
+function buildW2Form(hlFieldId,ctx){
+  const hl=hlFieldId;
+  const pfx=ctx==='ep'?'ep-':'';
+  const isB1=hl==='ff-b1';const isB2=hl==='ff-b2';const isB3=hl==='ff-b3';const isDt=hl==='ff-dt';
+  return `<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:5px">
+<div class="tp-row"><label><input type="radio" name="tp-${ctx}" checked> Taxpayer</label><label><input type="radio" name="tp-${ctx}"> Spouse</label></div>
+<div class="py-box"><div class="py-lbl">Prior Year</div><input class="py-val" type="text" readonly></div></div>
+<div class="fg g3" style="margin-bottom:0">
+<div class="ff${isB1?' hl':''}"><div class="fl req">1 Wages, tips, other comp.${isB1?'<span class="ff-hl-note"><i class="ti ti-alert-triangle"></i> Gap &mdash; value from SPbinder shown below</span>':''}</div><div class="ff-ir"><input type="number" id="${pfx}ff-b1" value="${spbNum('w2b1')||'115380.58'}" oninput="onFI('${pfx}ff-b1','w2b1',this.value)" style="${isB1?'border-color:var(--amber);background:#fffce6;':''}"><button class="pb">+</button></div></div>
+<div class="ff${isB2?' hl':''}"><div class="fl">2 Fed income tax withheld${isB2?'<span class="ff-hl-note"><i class="ti ti-alert-triangle"></i> Gap &mdash; SPbinder: $13,158.86 / Tax SW: $13,000.00</span>':''}</div><div class="ff-ir"><input type="number" id="${pfx}ff-b2" value="${spbNum('w2b2')||'13158.86'}" oninput="onFI('${pfx}ff-b2','w2b2',this.value)" style="${isB2?'border-color:var(--amber);background:#fffce6;':''}"><button class="mb">&minus;</button></div></div>
+<div class="ff${isB3?' hl':''}"><div class="fl">3 Social security wages${isB3?'<span class="ff-hl-note"><i class="ti ti-alert-triangle"></i> Gap &mdash; SPbinder: $10,000.00 / Tax SW: $20,000.00</span>':''}</div><div class="ff-ir"><input type="number" id="${pfx}ff-b3" value="${spbNum('w2b3')||'10000'}" oninput="onFI('${pfx}ff-b3','w2b3',this.value)" style="${isB3?'border-color:var(--amber);background:#fffce6;':''}"><button class="pb">+</button></div></div>
+<div class="ff"><div class="fl">b EIN</div><div class="ff-ir"><input type="text" style="width:80px" value="01-0704050"></div></div>
+</div>
+<div class="fg g3" style="margin-bottom:0">
+<div class="ff"><div class="fl req">c Employer name</div><input type="text" class="wide" value="WHYNOT STOP INC."></div>
+<div class="ff"><div class="fl">3 SS Wages</div><div class="ff-ir"><input type="number" value="121495.87"><button class="pb">+</button></div></div>
+<div class="ff"><div class="fl">4 SS Tax</div><div class="ff-ir"><input type="number" value="7532.74"><button class="pb">+</button></div></div>
+</div>
+<div class="fg g3" style="margin-bottom:0">
+<div class="ff"><div class="fl">Address</div><input type="text" class="wide" value="532 MAIN STREET, WATERVILE ME 25570"></div>
+<div class="ff"><div class="fl">5 Medicare Wages</div><div class="ff-ir"><input type="number" value="121495.87"><button class="pb">+</button></div></div>
+<div class="ff"><div class="fl">6 Medicare Tax</div><div class="ff-ir"><input type="number" value="1761.69"><button class="pb">+</button></div></div>
+</div>
+<div class="fg g2" style="margin-bottom:0">
+<div class="ff${isDt?' hl':''}"><div class="fl">W-2 Issue Date${isDt?'<span class="ff-hl-note"><i class="ti ti-alert-triangle"></i> Gap</span>':''}</div><input type="date" id="${pfx}ff-dt" value="${S.edits['w2dt']||'2023-01-31'}" onchange="onFI('${pfx}ff-dt','w2dt',this.value)"></div>
+<div class="ff"><div class="fl">State</div><select style="width:100%"><option>CA</option><option>ME</option><option>TX</option><option>NY</option></select></div>
+</div>`;
+}
+function buildDivForm(hlFieldId,ctx){
+  const pfx=ctx==='ep'?'ep-':'';
+  const isOrd=hlFieldId==='ff-divord';const isQual=hlFieldId==='ff-divqual';
+  return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:5px"><label><input type="radio" name="tp-div-${ctx}" checked> Joint</label><label><input type="radio" name="tp-div-${ctx}"> Taxpayer</label><label><input type="radio" name="tp-div-${ctx}"> Spouse</label><div class="py-box"><div class="py-lbl">Prior Year</div><input class="py-val" type="text" readonly></div></div>
+<div class="fg g3" style="margin-bottom:0">
+<div class="ff"><div class="fl req">Payer's name</div><input type="text" class="wide" value="FIDELITY BROKERAGE SERVICES LLC"></div>
+<div class="ff${isOrd?' hl':''}"><div class="fl">1a Ordinary Dividends${isOrd?'<span class="ff-hl-note"><i class="ti ti-alert-triangle"></i> Gap &mdash; doubled (SPbinder: $12,450 / Tax SW: $24,900)</span>':''}</div><div class="ff-ir"><input type="number" id="${pfx}ff-divord" value="${spbNum('divord')||'12450'}" oninput="onFI('${pfx}ff-divord','divord',this.value)" style="${isOrd?'border-color:var(--amber);background:#fffce6;':''}"><button class="pb">+</button></div></div>
+<div class="ff${isQual?' hl':''}"><div class="fl">1b Qualified Dividends${isQual?'<span class="ff-hl-note"><i class="ti ti-alert-triangle"></i> Gap &mdash; SPbinder: $9,800 / Tax SW: $8,200</span>':''}</div><div class="ff-ir"><input type="number" id="${pfx}ff-divqual" value="${spbNum('divqual')||'9800'}" oninput="onFI('${pfx}ff-divqual','divqual',this.value)" style="${isQual?'border-color:var(--amber);background:#fffce6;':''}"><button class="pb">+</button></div></div>
+</div>
+<div class="fg g3" style="margin-bottom:0">
+<div class="ff"><div class="fl">Street address</div><input type="text" class="wide" value="245 SUMMER STREET"></div>
+<div class="ff"><div class="fl">Foreign Dividends if different</div><div class="ff-ir"><input type="number" placeholder="0"><button class="pb">+</button></div></div>
+<div class="ff"><div class="fl">Foreign Qual. Dividends if different</div><div class="ff-ir"><input type="number" placeholder="0"><button class="pb">+</button></div></div>
+</div>
+<div class="fg g3" style="margin-bottom:0">
+<div class="ff"><div class="fl">City</div><input type="text" class="wide" value="BOSTON"><button class="pb">+</button></div>
+<div class="ff"><div class="fl">2a Total capital gain distr.</div><div class="ff-ir"><input type="number" value="2100"><button class="pb">+</button></div></div>
+<div class="ff"><div class="fl">2b Unrecap. sec 1250</div><div class="ff-ir"><input type="number" placeholder="0"><button class="pb">+</button></div></div>
+</div>
+<div class="fg g2" style="margin-bottom:0">
+<div class="ff"><div class="fl">PAYER'S Federal ID Number</div><div class="ff-ir"><input type="text" value="04-3512694"><button class="pb">+</button></div></div>
+<div class="ff"><div class="fl">4 Federal income tax withheld</div><div class="ff-ir"><input type="number" value="0"><button class="pb">+</button></div></div>
+</div>`;
+}
+function buildIntForm(hlFieldId,ctx){
+  const pfx=ctx==='ep'?'ep-':'';
+  const isUs=hlFieldId==='ff-intus';
+  return `<div style="margin-bottom:5px"><label style="font-size:11px"><input type="checkbox"> FATCA filing requirement</label></div>
+<div class="fg g3" style="margin-bottom:0">
+<div class="ff"><div class="fl">Payer's RTN</div><input type="text" value="021000021"></div>
+<div class="ff" style="grid-column:span 2"><div class="fl">Form 1099-INT</div></div>
+</div>
+<div class="fg g3" style="margin-bottom:0">
+<div class="ff"><div class="fl">Account number (optional)</div><input type="text" class="wide" value="CHK-1234567890"></div>
+<div class="ff"><div class="fl">1 Interest income not in box 3</div><div class="ff-ir"><input type="number" value="324"><button class="pb">+</button></div></div>
+<div class="ff"><div class="fl">Prior Year</div><input type="number" value="310"></div>
+</div>
+<div class="fg g2" style="margin-bottom:0">
+<div class="ff"><div class="fl">2 Early Withdrawal Penalty</div><div class="ff-ir"><input type="number" value="0"><button class="pb">+</button></div></div>
+<div class="ff${isUs?' hl':''}"><div class="fl">3 Interest on US Savings Bonds${isUs?'<span class="ff-hl-note"><i class="ti ti-alert-triangle"></i> Gap &mdash; blank in Tax SW, SPbinder: $1,200</span>':''}</div><div class="ff-ir"><input type="number" id="${pfx}ff-intus" value="${spbNum('intus')||'1200'}" oninput="onFI('${pfx}ff-intus','intus',this.value)" style="${isUs?'border-color:var(--amber);background:#fffce6;':''}"><button class="pb">+</button></div></div>
+</div>
+<div class="fg g2" style="margin-bottom:0">
+<div class="ff"><div class="fl">4 Federal Income Tax withheld</div><div class="ff-ir"><input type="number" value="0"><button class="pb">+</button></div></div>
+<div class="ff"><div class="fl">5 Investment expenses</div><div class="ff-ir"><input type="number" value="0"><button class="pb">+</button></div></div>
+</div>
+<div class="fg g2" style="margin-bottom:0">
+<div class="ff"><div class="fl">6 Foreign Tax Paid</div><div class="ff-ir"><input type="number" value="0"><button class="pb">+</button></div></div>
+<div class="ff"><div class="fl">7 Foreign country or US possession</div><select><option>None</option><option>Canada</option><option>UK</option></select></div>
+</div>`;
+}
+function build1099RForm(hlFieldId,ctx){
+  const pfx=ctx==='ep'?'ep-':'';
+  const isDist=hlFieldId==='ff-dist1';
+  return `<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:5px">
+<div class="tp-row"><label><input type="radio" name="tp-1r-${ctx}" checked> Taxpayer</label><label><input type="radio" name="tp-1r-${ctx}"> Spouse</label><label><input type="radio" name="tp-1r-${ctx}"> Joint</label></div>
+<div class="py-box"><div class="py-lbl">Prior Year</div><input class="py-val" type="text" readonly></div></div>
+<div class="fg g3" style="margin-bottom:0">
+<div class="ff"><div class="fl">PAYER'S name</div><input type="text" class="wide" value="VANGUARD GROUP"></div>
+<div class="ff${isDist?' hl':''}"><div class="fl req">1 Gross distribution${isDist?'<span class="ff-hl-note"><i class="ti ti-alert-triangle"></i> Gap &mdash; SPbinder: $45,000 / Tax SW: $44,500</span>':''}</div><div class="ff-ir"><input type="number" id="${pfx}ff-dist1" value="${spbNum('dist1')||'45000'}" oninput="onFI('${pfx}ff-dist1','dist1',this.value)" style="${isDist?'border-color:var(--amber);background:#fffce6;':''}"><button class="pb">+</button></div></div>
+<div class="ff"><div class="fl">Form 1099-R</div></div>
+</div>
+<div class="fg g3" style="margin-bottom:0">
+<div class="ff"><div class="fl">Payer's address</div><input type="text" class="wide" value="PO BOX 1110, VALLEY FORGE PA 19482"></div>
+<div class="ff"><div class="fl">2a Taxable amount</div><div class="ff-ir"><input type="number" value="45000"><button class="pb">+</button></div></div>
+<div class="ff"><div class="fl">4 Federal income tax withheld</div><div class="ff-ir"><input type="number" value="9000"><button class="pb">+</button></div></div>
+</div>
+<div class="fg g2" style="margin-bottom:0">
+<div class="ff"><div class="fl">PAYER'S Federal I.D. Number</div><div class="ff-ir"><input type="text" value="23-1945243"><button class="pb">+</button></div></div>
+<div class="ff"><div class="fl">7 Distribution code</div><select><option value="1">1 &mdash; Normal</option><option value="2">2 &mdash; Early</option><option value="7">7 &mdash; Normal after 59&frac12;</option><option value="G">G &mdash; Direct rollover</option></select></div>
+</div>`;
+}
+function buildK1Form(hlFieldId,ctx){
+  return `<div style="margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">
+<div><span style="font-size:12px;font-weight:700;color:var(--navy)">Income/Loss</span><label style="margin-left:10px;font-size:11px;color:var(--g3)"><input type="checkbox"> Inactive</label></div>
+<label style="font-size:10px;color:var(--g3)"><input type="checkbox"> Mark Amounts as Estimate</label></div>
+<table class="k1-income-table">
+<thead><tr><th>1065/PTP Line</th><th>1041 Line</th><th>Description</th><th>Federal Passive</th><th>Federal Nonpassive</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>6</td><td>Ordinary business income/loss</td><td><input type="number" value="1601"></td><td><input type="number" placeholder="0"></td></tr>
+<tr><td>2</td><td>7</td><td>Rental real estate income/loss</td><td><input type="number" placeholder="0"></td><td><input type="number" placeholder="0"></td></tr>
+<tr><td>3</td><td>8</td><td>Other net rental income/loss</td><td><input type="number" placeholder="0"></td><td><input type="number" value="1602"></td></tr>
+<tr><td>4A</td><td>N/A</td><td>Guaranteed payments for services</td><td colspan="2"><input type="number" placeholder="0"></td></tr>
+<tr><td>5</td><td>1</td><td>Other interest (Portfolio)</td><td><input type="number" placeholder="0"></td><td><input type="number" placeholder="0"></td></tr>
+<tr><td>6A</td><td>2A</td><td>Ordinary dividends (portfolio)</td><td><input type="number" placeholder="0"></td><td><input type="number" placeholder="0"></td></tr>
+<tr><td>6B</td><td>2B</td><td>Qualified dividends (portfolio)</td><td><input type="number" placeholder="0"></td><td><input type="number" placeholder="0"></td></tr>
+<tr><td>7</td><td>*</td><td>Royalties (portfolio)</td><td><input type="number" placeholder="0"></td><td><input type="number" placeholder="0"></td></tr>
+<tr><td>8</td><td>3</td><td>Net short-term capital gain/loss</td><td><input type="number" placeholder="0"></td><td><input type="number" placeholder="0"></td></tr>
+</tbody></table>`;
+}
+function buildFormSide(catId){
+  if(catId==='wages') return `<div class="side-section"><div class="side-hdr">Foreign Wages (Form 2555)</div><div class="side-row">Match W-2 with Employer<span class="dots"></span></div></div><div class="side-section"><div class="side-hdr" style="color:var(--red)">FEC Record</div><p>Check either "Report on FEC Record" or "Do not Report on W-2"</p><div class="chk-row"><input type="checkbox"><span>Report on FEC Record</span></div><div class="chk-row"><input type="checkbox"><span>Do not report on W-2 or FEC</span></div></div>`;
+  if(catId==='dividends') return `<div class="side-section"><div class="side-hdr">Form 1099-DIV</div><div style="background:#f5f6f8;border:1px solid var(--g1);padding:6px;font-size:10px;color:var(--g4);border-radius:3px">Foreign qualified dividends are reported separately if different from regular qualified dividends.</div></div>`;
+  if(catId==='interest') return `<div class="side-section"><div class="side-hdr">Foreign Income Type</div><div class="chk-row"><input type="radio" name="fi" checked><span style="font-size:11px">Passive category income</span></div><div class="chk-row"><input type="radio" name="fi"><span style="font-size:11px">Section 951A category income</span></div><div class="chk-row"><input type="radio" name="fi"><span style="font-size:11px">Foreign branch category income</span></div></div>`;
+  if(catId==='1099r') return `<div class="side-section"><div class="side-hdr">1099-R Notes</div><p style="font-size:11px;color:var(--g3)">Enter Payer Federal I.D. for Live Sync of Box 1 in Tax Software.</p></div>`;
+  if(catId==='k1') return `<div class="side-section"><div class="side-hdr">1040NR NEC Tax Rate</div><div class="chk-row"><input type="radio" name="nec" checked><span style="font-size:11px">30%</span></div><div class="chk-row"><input type="radio" name="nec"><span style="font-size:11px">10%</span></div><div class="chk-row"><input type="radio" name="nec"><span style="font-size:11px">15%</span></div></div>`;
+  return '';
+}
+
+function openDoc(key,title){
+  document.querySelectorAll('.tri').forEach(t=>t.classList.remove('sel'));
+  const treeId='tree-'+key.replace(/_/g,'-');
+  const tEl=document.getElementById(treeId);
+  if(tEl)tEl.classList.add('sel');
+  document.getElementById('dvTitle').textContent=title||key;
+  // Update icon: PDF icon for W2/K1 source docs, chart for 1099
+  const iconEl=document.getElementById('dvIcon');
+  if(iconEl){
+    if(key.startsWith('w2'))      {iconEl.className='ti ti-file-pdf';iconEl.style.color='var(--red)';}
+    else if(key==='k1')           {iconEl.className='ti ti-file-certificate';iconEl.style.color='var(--purple)';}
+    else if(key==='1099div')      {iconEl.className='ti ti-chart-line';iconEl.style.color='var(--blue)';}
+    else if(key==='1099int')      {iconEl.className='ti ti-percentage';iconEl.style.color='var(--teal)';}
+    else if(key==='1099r')        {iconEl.className='ti ti-building-bank';iconEl.style.color='var(--navy)';}
+    else                          {iconEl.className='ti ti-file-text';iconEl.style.color='var(--g3)';}
+  }
+  const inner=document.getElementById('dvInner');
+  const z=parseFloat(document.getElementById('dvZoom').value)/100||1;
+  inner.innerHTML='<div id="dvZoomWrap" style="transform:scale('+z+');transform-origin:top center;transition:transform .2s;display:flex;flex-direction:column;align-items:center;gap:8px;padding-bottom:12px">'+buildDocHTML(key)+'</div>';
+}
+function applyZoom(){
+  const z=parseFloat(document.getElementById('dvZoom').value)/100||1;
+  const wrap=document.getElementById('dvZoomWrap');
+  if(wrap)wrap.style.transform='scale('+z+')';
+}
+function zoomStep(dir){
+  const sel=document.getElementById('dvZoom');
+  const opts=[65,75,85,100,115,130];
+  const cur=parseFloat(sel.value)||100;
+  const idx=opts.indexOf(cur);
+  const next=opts[Math.max(0,Math.min(opts.length-1,idx+dir))];
+  sel.value=next;applyZoom();
+}
+function resetZoom(){document.getElementById('dvZoom').value=100;applyZoom();}
+function buildDocHTML(key){
+  if(key==='w2_whynot'||key==='w2'){
+    return `<div class="w2-doc">
+<div class="w2-doc-title">Form W-2 Wage &amp; Tax Statement 2023 &nbsp;&#8212;&nbsp; Copy B</div>
+<div class="w2-doc-sub">OMB No. 1545-0008 &nbsp;|&nbsp; Department of the Treasury &mdash; Internal Revenue Service</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:0">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+<div class="w2b"><div class="wl">a Employee SSN</div><div class="wv">123-45-6789</div></div>
+<div class="w2b"><div class="wl">b EIN</div><div class="wv">01-0704050</div></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+<div class="w2b"><div class="wl">1 Wages, tips, other comp.</div><div class="wv" style="color:var(--red)">115,380.58</div></div>
+<div class="w2b"><div class="wl">2 Federal income tax withheld</div><div class="wv">13,158.86</div></div>
+</div>
+</div>
+<div class="w2b"><div class="wl">c Employer name, address, ZIP</div><div class="wv">WHYNOT STOP INC. &nbsp;&nbsp; 532 MAIN STREET, WATERVILE ME 25570</div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+<div class="w2b"><div class="wl">3 Social security wages</div><div class="wv">121,495.87</div></div>
+<div class="w2b"><div class="wl">4 SS tax withheld</div><div class="wv">7,532.74</div></div>
+<div class="w2b"><div class="wl">5 Medicare wages and tips</div><div class="wv">121,495.87</div></div>
+<div class="w2b"><div class="wl">6 Medicare tax withheld</div><div class="wv">1,761.69</div></div>
+<div class="w2b"><div class="wl">7 Social security tips</div><div class="wv">0.00</div></div>
+<div class="w2b"><div class="wl">8 Allocated tips</div><div class="wv">0.00</div></div>
+</div>
+<div class="w2b"><div class="wl">e Employee name, address, ZIP</div><div class="wv">JILL ANDERSON &nbsp;&nbsp; 1234 MAIN STREET, NEWPORT BEACH CA 92660</div></div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0">
+<div class="w2b"><div class="wl">15 State</div><div class="wv">CA</div></div>
+<div class="w2b"><div class="wl">16 State wages</div><div class="wv">115,380.58</div></div>
+<div class="w2b"><div class="wl">17 State income tax</div><div class="wv">3,992.17</div></div>
+<div class="w2b"><div class="wl">19 Local income tax</div><div class="wv">1,153.81</div></div>
+</div>
+</div>`;
+  }
+  if(key==='w2_usbank'){
+    return `<div class="w2-doc">
+<div class="w2-doc-title">Form W-2 Wage and Tax Statement 2023</div>
+<div class="w2-doc-sub">OMB No. 1545-0008 &nbsp;|&nbsp; Copy C &mdash; For Employee's Records</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0">
+<div class="w2b" style="grid-column:span 2"><div class="wl">a Employee SSN</div><div class="wv">111-11-1111</div></div>
+<div class="w2b"><div class="wl">1 Wages, tips, other comp.</div><div class="wv" style="color:var(--red)">320,066.13</div></div>
+<div class="w2b"><div class="wl">2 Federal income tax withheld</div><div class="wv">93,342.64</div></div>
+<div class="w2b" style="grid-column:span 2"><div class="wl">b EIN</div><div class="wv">31-0841368</div></div>
+<div class="w2b"><div class="wl">3 Social security wages</div><div class="wv">147,000.00</div></div>
+<div class="w2b"><div class="wl">4 SS tax withheld</div><div class="wv">9,114.00</div></div>
+</div>
+<div class="w2b"><div class="wl">c Employer</div><div class="wv">US BANK NATIONAL ASSOC. &nbsp;&nbsp; 4000 W BROADWAY, NEWYORK NY 10281</div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+<div class="w2b"><div class="wl">5 Medicare wages and tips</div><div class="wv">340,566.13</div></div>
+<div class="w2b"><div class="wl">6 Medicare tax withheld</div><div class="wv">6,203.31</div></div>
+</div>
+<div class="w2b"><div class="wl">e Employee</div><div class="wv">JACK ANDERSON &nbsp;&nbsp; 1234 MAIN STREET, NEWPORT BEACH CA 92660</div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0">
+<div class="w2b"><div class="wl">15 State</div><div class="wv">CA &nbsp; 263-929-045/000</div></div>
+<div class="w2b"><div class="wl">16 State wages</div><div class="wv">322,084.29</div></div>
+<div class="w2b"><div class="wl">17 State income tax</div><div class="wv">20,375.51</div></div>
+</div>
+</div>`;
+  }
+  if(key==='1099div'){
+    return `<div class="w2-doc"><div class="w2-doc-title">1099-DIV &mdash; Dividends and Distributions 2025</div>
+<div class="w2-doc-sub">Fidelity Brokerage Services LLC | TIN: 04-3512694</div>
+<div style="display:grid;grid-template-columns:280px 1fr 1fr;gap:0">
+<div class="w2b" style="grid-row:span 3"><div class="wl">Payer</div><div class="wv" style="font-size:11px">FIDELITY BROKERAGE SERVICES LLC<br>245 SUMMER STREET<br>BOSTON MA 02210</div></div>
+<div class="w2b"><div class="wl">1a Ordinary dividends</div><div class="wv" style="color:var(--amber)">12,450.00</div></div>
+<div class="w2b"><div class="wl">Form 1099-DIV</div><div class="wv" style="font-size:10px;color:var(--g3)">OMB No. 1545-0110</div></div>
+<div class="w2b"><div class="wl">1b Qualified dividends</div><div class="wv">9,800.00</div></div>
+<div class="w2b" style="grid-row:span 2"></div>
+<div class="w2b"><div class="wl">2a Total capital gain distr.</div><div class="wv">2,100.00</div></div>
+<div class="w2b"><div class="wl">4 Federal income tax withheld</div><div class="wv">0.00</div></div>
+<div class="w2b"><div class="wl">Recipient TIN</div><div class="wv">123-45-6789</div></div>
+</div></div>`;
+  }
+  if(key==='1099int'){
+    return `<div class="w2-doc"><div class="w2-doc-title">1099-INT &mdash; Interest Income 2025</div>
+<div class="w2-doc-sub">JPMorgan Chase Bank NA | TIN: 13-4994650</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0">
+<div class="w2b"><div class="wl">Payer's RTN</div><div class="wv">021000021</div></div>
+<div class="w2b" style="grid-column:span 2"><div class="wl">Form 1099-INT</div><div class="wv" style="font-size:10px;color:var(--g3)">OMB No. 1545-0112</div></div>
+<div class="w2b"><div class="wl">1 Interest income</div><div class="wv">324.00</div></div>
+<div class="w2b" style="grid-column:span 2"><div class="wl">Prior Year</div><div class="wv">310.00</div></div>
+<div class="w2b"><div class="wl">3 US Savings Bond interest</div><div class="wv" style="color:var(--red)">1,200.00</div></div>
+<div class="w2b"><div class="wl">4 Federal tax withheld</div><div class="wv">0.00</div></div>
+<div class="w2b"><div class="wl">6 Foreign Tax Paid</div><div class="wv">0.00</div></div>
+</div></div>`;
+  }
+  if(key==='1099r'){
+    return `<div class="w2-doc"><div class="w2-doc-title">1099-R &mdash; Distributions From Pensions &amp; Annuities 2025</div>
+<div class="w2-doc-sub">Vanguard Group | TIN: 23-1945243</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0">
+<div class="w2b"><div class="wl">Payer name</div><div class="wv" style="font-size:11px">VANGUARD GROUP<br>PO BOX 1110<br>VALLEY FORGE PA 19482</div></div>
+<div class="w2b"><div class="wl">1 Gross distribution</div><div class="wv" style="color:var(--amber)">45,000.00</div></div>
+<div class="w2b"><div class="wl">Form 1099-R</div><div class="wv" style="font-size:10px;color:var(--g3)">OMB No. 1545-0119</div></div>
+<div class="w2b"><div class="wl">2a Taxable amount</div><div class="wv">45,000.00</div></div>
+<div class="w2b"><div class="wl">4 Fed income tax withheld</div><div class="wv">9,000.00</div></div>
+<div class="w2b"><div class="wl">7 Distribution code</div><div class="wv">1 &mdash; Normal</div></div>
+<div class="w2b"><div class="wl">Recipient TIN</div><div class="wv">123-45-6789</div></div>
+<div class="w2b"><div class="wl">Recipient name</div><div class="wv">JILL ANDERSON</div></div>
+</div></div>`;
+  }
+  if(key==='k1'){
+    return `<div class="w2-doc"><div class="w2-doc-title">Schedule K-1 (Form 1041) 2023 &mdash; Chapman Irrevocable Trust</div>
+<div class="w2-doc-sub">EIN: 34-3353535 | Fiduciary: FIRST CHICAGO BANK, TRUSTEE | Beneficiary: JILL BAKER FAMILY TRUST</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+<div class="w2b"><div class="wl">A Estate/Trust EIN</div><div class="wv">34-3353535</div></div>
+<div class="w2b"><div class="wl">F Beneficiary TIN</div><div class="wv">12-3674289</div></div>
+<div class="w2b"><div class="wl">B Estate/Trust Name</div><div class="wv">CHAPMAN IRREVOCABLE TRUST</div></div>
+<div class="w2b"><div class="wl">G Beneficiary Name</div><div class="wv">JILL BAKER FAMILY TRUST</div></div>
+<div class="w2b"><div class="wl">1 Interest income</div><div class="wv">1,721.00</div></div>
+<div class="w2b"><div class="wl">2a Ordinary dividends</div><div class="wv">57,765.00</div></div>
+<div class="w2b"><div class="wl">2b Qualified dividends</div><div class="wv">47,355.00</div></div>
+<div class="w2b"><div class="wl">6 Ordinary business income</div><div class="wv">7,348.00</div></div>
+<div class="w2b"><div class="wl">14A Net investment income</div><div class="wv">580.00</div></div>
+<div class="w2b"><div class="wl">14B AMT adjustment</div><div class="wv">1,575.00</div></div>
+</div></div>`;
+  }
+  return '<div class="w2-doc"><div class="w2-doc-title">Document</div><p style="font-size:11px;color:var(--g3);padding:10px">No document selected.</p></div>';
+}
+
+
+// ── BINDER MODE ──────────────────────────────────────────
+function setBinderMode(mode){
+  S.binderMode=mode;
+  ['classic','simplified','none'].forEach(m=>{
+    const b=document.getElementById('bm-'+m);
+    if(b) b.classList.toggle('active', m===mode);
+  });
+  applyBinderMode(mode);
+  // (hint removed — col3 panel removed)
+}
+function applyBinderMode(mode){
+  var tabForms=document.getElementById('tab-forms');
+  var tabLeads=document.getElementById('tab-leads');
+  if(mode==='classic'){
+    if(tabForms) tabForms.classList.remove('hidden');
+    if(tabLeads) tabLeads.classList.remove('hidden');
+  } else if(mode==='simplified'){
+    if(tabForms) tabForms.classList.add('hidden');
+    if(tabLeads) tabLeads.classList.remove('hidden');
+    if(getCurrentPane()==='forms') switchPane('leads');
+  } else {
+    if(tabForms) tabForms.classList.add('hidden');
+    if(tabLeads) tabLeads.classList.add('hidden');
+    if(getCurrentPane()==='forms'||getCurrentPane()==='leads') switchPane('notes');
+  }
+}
+
+// ── GO TO INPUT FORM ─────────────────────────────────────
+function goToInputFormDirect(f){
+  if(typeof f === 'string') f = ALL_FIELDS[f];
+  if(!f) return;
+  // K-1 Reclass fields go to K-1 Reclass window (Classic + Simplified)
+  if(f.k1Reclass && (S.binderMode==='classic'||S.binderMode==='simplified')){
+    goToK1Reclass(f); return;
+  }
+  S.gotoField   = f;
+  S.activeField = f.id;
+
+  // Show Input Forms tab
+  var tabForms = document.getElementById('tab-forms');
+  if(tabForms){
+    tabForms.classList.remove('hidden');
+    if(S.binderMode !== 'classic') tabForms.classList.add('dynamic');
+    else                            tabForms.classList.remove('dynamic');
+  }
+  // In simplified/none, Input Forms tab is not available — redirect to notes
+  if(!tabForms || S.binderMode === 'simplified' || S.binderMode === 'none'){
+    return; // no Input Forms in this mode — should not be called
+  }
+
+  // Switch to forms pane (does NOT call buildIfList now)
+  switchPane('forms');
+
+  // Build the left list for this category
+  buildIfList(f.cat);
+
+  // Build the form with the gap field highlighted
+  buildMainForm(f.cat, f.ifInputId);
+
+  // After DOM renders: scroll to field, highlight, focus
+  setTimeout(function(){
+    // Clear any previous highlight
+    document.querySelectorAll('.ff.field-active-hl').forEach(function(el){
+      el.classList.remove('field-active-hl');
+    });
+
+    var fieldEl = f.ifInputId ? document.getElementById(f.ifInputId) : null;
+    if(!fieldEl) return;
+
+    var ffDiv = fieldEl.closest('.ff');
+    if(ffDiv){
+      ffDiv.classList.add('field-active-hl');
+      ffDiv.scrollIntoView({behavior:'smooth', block:'center'});
+    } else {
+      fieldEl.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+
+    fieldEl.focus();
+    try{ fieldEl.select(); } catch(e){}
+
+    // Live sync back to reconciliation table when user edits
+    if(!fieldEl._reconBound){
+      fieldEl._reconBound = true;
+      fieldEl.addEventListener('input', function(){
+        var val = this.value.trim();
+        if(val){ S.edits[f.id] = val; S.binderDirty = true; }
+        else    { delete S.edits[f.id]; }
+        this.style.borderColor = 'var(--teal)';
+        if(ffDiv) ffDiv.classList.remove('field-active-hl');
+        updateStats();
+        if(S.activeCat) renderFieldTable(S.activeCat);
+        renderCategories();
+        var _tfw=document.getElementById('tab-forms'); if(_tfw) _tfw.classList.add('warn-ind');
+        setStatus('Auto-saved — export pending.');
+        setTimeout(function(){ setStatus('All changes saved.'); }, 2000);
+      });
+    }
+  }, 200);
+}
+
+
+// Alias kept for col3 button (col3 removed but kept as fallback)
+function goToInputForm(){
+  if(S.gotoField) goToInputFormDirect(S.gotoField);
+}
+
+
+
+
+// ══════════════════════════════════════════════════════════
+// PRD RECONCILIATION STATE MACHINE
+// States: 'idle' | 'running' | 'results' | 'noissues'
+// ══════════════════════════════════════════════════════════
+function showReconState(state){/* results via toast only */}
+
+function startReconciliation(){
+  if(!S.exportDone){ setStatus('Export first before reconciling.'); return; }
+  showReconState('running');
+  S.reconRunning=true;
+  // Progress animation — PRD rotating messages
+  const MSGS=[
+    'Connecting to GoSystem Tax RS\u2026',
+    'Fetching latest field values from Tax Software\u2026',
+    'Reading latest SPbinder data\u2026',
+    'Comparing Tax Software vs SPbinder values field by field\u2026',
+    'Identifying missing fields\u2026',
+    'Checking for value mismatches\u2026',
+    'Validating form categories\u2026',
+    'Cross-referencing W-2, 1099 and K-1 data\u2026',
+    'Re-running with latest data from both systems\u2026',
+    'Finalising results\u2026'
+  ];
+  const stepsEl=document.getElementById('reconRunningSteps');
+  const bar=document.getElementById('reconRunningBar');
+  const msgEl=document.getElementById('reconRunningMsg');
+  stepsEl.innerHTML=MSGS.map((m,i)=>
+    '<div class="rrs" id="rrs-'+i+'"><i class="ti ti-circle"></i><span>'+m+'</span></div>'
+  ).join('');
+  bar.style.width='0%';
+  const TOTAL=4000, startT=Date.now(); // 4 seconds — enough for animation
+  let stepIdx=0;
+  const stepTimes=MSGS.map((_,i)=>Math.round((i/MSGS.length)*TOTAL));
+  function tick(){
+    const elapsed=Date.now()-startT;
+    const pct=Math.min(100,Math.round((elapsed/TOTAL)*100));
+    bar.style.width=pct+'%';
+    while(stepIdx<MSGS.length&&elapsed>=stepTimes[stepIdx]){
+      const rs=document.getElementById('rrs-'+stepIdx);
+      if(rs){ rs.classList.add('active'); if(stepIdx>0){const p=document.getElementById('rrs-'+(stepIdx-1));if(p){p.classList.remove('active');p.classList.add('done');p.querySelector('i').className='ti ti-circle-check';}} }
+      msgEl.textContent=MSGS[stepIdx];
+      stepIdx++;
+    }
+    if(!S.reconRunning) return; // cancelled
+    if(elapsed<TOTAL) setTimeout(tick,200); else finishReconciliation();
+  }
+  setTimeout(tick,100);
+}
+
+function cancelReconciliation(){
+  S.reconRunning=false;
+  showReconState('idle');
+  document.getElementById('reconCtaSub').textContent='Reconciliation cancelled.';
+}
+
+function finishReconciliation(){
+  S.reconRunning=false;
+  S.rerunCount++;
+  S.lastRunTs=new Date();
+  updateLastRunDisplay();
+  const bar=document.getElementById('reconRunningBar');
+  if(bar) bar.style.width='100%';
+  setTimeout(()=>{
+    const hasGaps=S.activeGapIds.length>0;
+    if(hasGaps){
+      showReconState('results');
+      // Auto-select first category with gaps
+      if(!S.activeCat){
+        var firstCat = CATEGORIES.find(function(c){
+          return S.activeGapIds.some(function(id){return ALL_FIELDS[id]&&ALL_FIELDS[id].cat===c.id;});
+        });
+        if(firstCat) S.activeCat = firstCat.id;
+      }
+      if(S.activeCat) renderFieldTable(S.activeCat);
+      renderCategories(); updateStats();
+      showBanner('\u26a0 Reconciliation complete \u2014 '+S.activeGapIds.length+' gap'+(S.activeGapIds.length===1?'':'s')+' found. Click to review.','gap');
+    } else {
+      showReconState('noissues');
+      const tsEl=document.getElementById('noIssueTsText');
+      if(tsEl) tsEl.innerHTML='<i class="ti ti-clock"></i> Last run: '+formatTs(S.lastRunTs);
+      showBanner('\u2714 Reconciliation complete \u2014 all fields match!','success');
+    }
+  }, 600);
+}
+
+// ══════════════════════════════════════════════════════════
+// CLOSE / OPEN BINDER (PRD: tab resets on close)
+// ══════════════════════════════════════════════════════════
+function closeBinder(){
+  // Reset all state — as if binder was closed
+  S.exportDone=false; S.exportCount=0; S.rerunCount=0;
+  S.binderDirty=false; S.activeGapIds=[]; S.edits={};
+  S.activeCat=null; S.activeField=null; S.lastRunTs=null;
+  S.reconUnlocked=false; S.reconTabVisible=false; S.reconRunning=false; S.filter='all';
+  // Hide reconciliation tab and reset to idle
+  var tab=document.getElementById('tab-recon');
+  if(tab){tab.classList.add('hidden');tab.classList.remove('warn-ind');}
+  setReconMenuState(false);
+  showReconState('idle');
+  document.getElementById('reconCtaSub').textContent='';
+  renderCategories(); updateStats(); updateLastRunDisplay();
+  // Show closed overlay
+  document.getElementById('binderClosedOverlay').classList.remove('hidden');
+  // Disable toolbar buttons
+  const eb=document.getElementById('exportBtn');
+  if(eb){eb.disabled=true;eb.style.opacity='.4';}
+  const cb=document.getElementById('closeBinder');
+  if(cb){cb.classList.remove('tb');cb.classList.add('hidden');}
+  const ob=document.getElementById('openBinder');
+  if(ob){ob.classList.remove('hidden');ob.classList.add('tb','binder-open');}
+  setStatus('Binder closed. Reconciliation data cleared.');
+}
+
+function openBinder(){
+  // Show binder again
+  document.getElementById('binderClosedOverlay').classList.add('hidden');
+  const eb=document.getElementById('exportBtn');
+  if(eb){eb.disabled=false;eb.style.opacity='';}
+  const ob=document.getElementById('openBinder');
+  if(ob){ob.classList.add('hidden');}
+  const cb=document.getElementById('closeBinder');
+  if(cb){cb.classList.remove('hidden');cb.classList.add('tb','binder-close');}
+  // Show idle recon state (PRD: tab hidden, user must click Recon button)
+  showReconState('idle');
+  document.getElementById('reconCtaSub').textContent='Binder opened. Click the Reconciliation button in the menu bar to begin.';
+  setStatus('Binder opened. Export first, then use the Reconciliation button.');
+}
+
+
+function toggleFormCard(cardId){
+  var body=document.getElementById(cardId);
+  var chev=document.getElementById('chev-'+cardId);
+  if(!body) return;
+  var open=body.style.display==='block';
+  body.style.display=open?'none':'block';
+  if(chev) chev.style.transform=open?'':'rotate(180deg)';
+}
+
+/* workflow switcher removed */
+
+function updateIdleCTA(){
+  var sub = document.getElementById('reconCtaSub');
+  if(!sub) return;
+  var msgs = {
+    wf2: 'WF-A: Reconciliation auto-runs after export. You can also start manually — if export is pending a prompt will appear.',
+    wf3: 'WF-B: Manual trigger only. If export is pending a prompt will appear before reconciliation starts.'
+  };
+  sub.textContent = msgs[S.wfVariant] || '';
+}
+
+
+// ══ WF2 SILENT BACKGROUND RECONCILIATION ════════════════════════════════════
+function startReconSilent(){setReconRunning(true);
+  showSpbToast({type:'running',title:'Reconciliation Running',msg:'Comparing SPbinder data with Tax Software…',duration:0,id:'bg-recon-toast'});
+  S.reconRunning=true;
+  const MSGS=[
+    'Connecting to GoSystem Tax RS\u2026',
+    'Fetching latest data from Tax Software\u2026',
+    'Reading latest SPbinder data\u2026',
+    'Comparing both systems field by field\u2026',
+    'Identifying missing fields\u2026',
+    'Checking for value mismatches\u2026',
+    'Validating form categories and missing forms\u2026',
+    'Re-running with latest data from both systems\u2026',
+    'Finalising results\u2026'
+  ];
+  const TOTAL=4000; // 4 seconds
+  const startT=Date.now();
+  let step=0;
+  const stepTimes=MSGS.map(function(_,i){return Math.round((i/MSGS.length)*TOTAL);});
+
+  function tick(){
+    if(!S.reconRunning) return; // cancelled
+    const elapsed=Date.now()-startT;
+    // Update toast message with current step
+    while(step<MSGS.length && elapsed>=stepTimes[step]){
+      const toastMsg=null;// bgToastMsg removed
+      // step msg suppressed
+      step++;
+    }
+    if(elapsed<TOTAL){
+      setTimeout(tick, 300);
+    } else {
+      finishReconSilent();
+    }
+  }
+  setTimeout(tick, 300);
+}
+
+function finishReconSilent(){
+  S.reconRunning=false;S.rerunCount++;S.lastRunTs=new Date();
+  updateLastRunDisplay();setReconRunning(false);
+  dismissSpbToast('bg-recon-toast');
+  var sc=SCENARIOS[S.scenario]||{};
+  if(sc.forceError){
+    _showReconError();
+    updateViewResultsBtn();
+    return;
+  }
+  S.activeGapIds=sc.initialGaps?sc.initialGaps.slice():[];
+  _showReconResult(S.activeGapIds.length>0);
+  /* For dirty-warning scenario: mark binder dirty AFTER first auto recon so user can try manual rerun */
+  if(S._markDirtyAfterRecon){
+    S.binderDirty=true;
+    S._markDirtyAfterRecon=false;
+    setReconRunning(false);/* refresh button states with dirty=true */
+    showSpbToast({type:'warning',title:'Binder Has Pending Changes',
+      msg:'New edits detected since last export. Export again before running reconciliation manually.',
+      duration:0,id:'dirty-warn-toast'});
+    setStatus('Binder has pending changes. Export required before manual reconciliation.');
+  }
+  updateViewResultsBtn();
+}
+
+
+// ══ ACKNOWLEDGE / IGNORE SYSTEM ═════════════════════════════════════════════
+// S.fieldActions[fieldId] = 'acknowledged' | 'ignored' | null
+// A field with an action set will be HIDDEN from the main gap list on re-run
+// but shown in a collapsible "Suppressed" section at the bottom.
+
+function setFieldAction(fieldId, action){
+  if(!S.fieldActions) S.fieldActions={};
+  if(S.fieldActions[fieldId]===action){
+    // Toggle off
+    delete S.fieldActions[fieldId];
+  } else {
+    S.fieldActions[fieldId]=action;
+    // Log the action
+    var logTs=new Date().toLocaleTimeString();
+    console.log('[ReconLog] Field "'+fieldId+'" marked as '+action+' at '+logTs);
+  }
+  if(S.activeCat) renderFieldTable(S.activeCat);
+}
+
+function undoFieldAction(fieldId){
+  if(S.fieldActions) delete S.fieldActions[fieldId];
+  if(S.activeCat) renderFieldTable(S.activeCat);
+}
+
+// ══ K-1 RECLASS WINDOW ══════════════════════════════════════════════════════
+function goToK1Reclass(f){
+  if(typeof f==='string') f=ALL_FIELDS[f];
+  if(!f||!f.k1Reclass) return;
+  S.gotoField=f; S.activeField=f.id;
+  // Open K-1 Reclass modal
+  var modal=document.getElementById('k1ReclassModal');
+  if(!modal) return;
+  buildK1ReclassWindow(f);
+  modal.classList.add('open');
+  setStatus('K-1 Reclass window opened for: '+f.name);
+}
+
+function buildK1ReclassWindow(f){
+  var body=document.getElementById('k1ReclassBody');
+  if(!body) return;
+  var isRef=!!f.ifInputId;
+  body.innerHTML=
+    '<div style="background:var(--amber-lt);border:1px solid #f0d8a0;border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:12px;display:flex;align-items:flex-start;gap:8px">'+
+      '<i class="ti ti-alert-triangle" style="color:var(--amber);font-size:16px;flex-shrink:0;margin-top:1px"></i>'+
+      '<div><b style="color:var(--navy)">Gap identified: '+f.name+'</b>'+
+      '<div style="color:var(--txt2);margin-top:3px">'+
+        'SPbinder: <b style="color:var(--blue)">'+f.spbVal+'</b> &nbsp;&nbsp; '+
+        'Tax Software: <b style="color:var(--red)">'+f.taxVal+'</b>'+
+      '</div></div>'+
+    '</div>'+
+    '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:16px">'+
+      '<thead><tr style="background:var(--navy)">'+
+        '<th style="padding:8px 12px;color:#fff;text-align:left;font-size:11px">K-1 Income Type</th>'+
+        '<th style="padding:8px 12px;color:#fff;text-align:right;font-size:11px">Current Amount</th>'+
+        '<th style="padding:8px 12px;color:#fff;text-align:right;font-size:11px">Tax SW Amount</th>'+
+        '<th style="padding:8px 12px;color:#fff;text-align:right;font-size:11px">Reclassified Amount</th>'+
+      '</tr></thead>'+
+      '<tbody>'+
+        '<tr style="border-bottom:1px solid var(--g1)">'+
+          '<td style="padding:7px 12px">'+f.name+'</td>'+
+          '<td style="padding:7px 12px;text-align:right;color:var(--blue)">'+f.spbVal+'</td>'+
+          '<td style="padding:7px 12px;text-align:right;color:var(--red)">'+f.taxVal+'</td>'+
+          '<td style="padding:7px 12px;text-align:right"><input type="number" id="'+f.ifInputId+'" value="'+f.spbVal.replace(/[$,]/g,'')+'" oninput="onK1ReclassInput(\''+f.id+'\',this.value)" style="width:110px;text-align:right;border:1px solid var(--bdr);border-radius:3px;padding:3px 6px;font-size:12px"></td>'+
+        '</tr>'+
+      '</tbody>'+
+    '</table>'+
+    '<div style="font-size:11px;color:var(--g3);padding:8px 12px;background:var(--g0);border-radius:4px">'+
+      '<i class="ti ti-info-circle" style="color:var(--blue)"></i> '+
+      (isRef ? 'This field is referenced. Your reclassified value will be auto-saved and reflected in the Reconciliation tab.' :
+               'This field does not have a direct reference. Enter the reclassified amount above and save.')+
+    '</div>';
+}
+
+function onK1ReclassInput(fieldId, val){
+  if(val&&val.trim()){S.edits[fieldId]='$'+parseFloat(val).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});S.binderDirty=true;}
+  else delete S.edits[fieldId];
+  updateStats();
+  if(S.activeCat) renderFieldTable(S.activeCat);
+  renderCategories();
+  setStatus('K-1 Reclass value auto-saved. Export pending.');
+}
+
+function closeK1Reclass(){
+  document.getElementById('k1ReclassModal').classList.remove('open');
+  showBanner('\u2714 K-1 Reclass value saved. Return to Reconciliation tab to verify.','success');
+}
+
+
+// ══ EXPORT INFO MODAL ═══════════════════════════════════════════════════════
+// Informational — not a hard block. User can export first OR dismiss and view data.
+function showExportInfoModal(onProceedCallback){
+  var modal = document.getElementById('exportInfoModal');
+  if(!modal) return;
+  // Wire up buttons
+  var proceedBtn = document.getElementById('exportInfoProceed');
+  var exportBtn  = document.getElementById('exportInfoExport');
+  var closeBtn   = document.getElementById('exportInfoClose');
+
+  // "Export first" — open export modal and close info modal
+  if(exportBtn){
+    exportBtn.onclick = function(){
+      closeExportInfoModal();
+      openModal('exportModal');
+    };
+  }
+
+  // "Continue to Reconciliation" — close modal and proceed
+  if(proceedBtn){
+    proceedBtn.onclick = function(){
+      closeExportInfoModal();
+      if(typeof onProceedCallback === 'function') onProceedCallback();
+    };
+  }
+  if(closeBtn){
+    closeBtn.onclick = function(){
+      closeExportInfoModal();
+      if(typeof onProceedCallback === 'function') onProceedCallback();
+    };
+  }
+
+  modal.classList.add('open');
+}
+
+function closeExportInfoModal(){
+  var modal = document.getElementById('exportInfoModal');
+  if(modal) modal.classList.remove('open');
+}
+
+function renderModeResolutionNote(){
+  var existing=document.getElementById('modeResolutionNote');if(existing)return;
+  var container=document.getElementById('reconContent');if(!container)return;
+  var note=document.createElement('div');note.id='modeResolutionNote';
+  note.style.cssText='grid-column:1/-1;padding:11px 16px;background:#f3eafd;border-bottom:2px solid #c8a8e8;display:flex;align-items:flex-start;gap:10px;flex-shrink:0';
+  note.innerHTML='<i class="ti ti-file-plus" style="font-size:16px;color:#6b3fa0;flex-shrink:0;margin-top:2px"></i><div style="flex:1"><b style="color:#6b3fa0;font-size:12px;display:block;margin-bottom:3px">Add Documents to resolve these gaps</b><span style="font-size:11px;color:var(--txt2);line-height:1.5">Gaps in None Leadsheets mode are resolved by completing the <b>Add Documents</b> process. <b style="color:#c0392b">Unless documents are added, the data will never match.</b></span></div><button onclick="simulateAddDocuments()" id="addDocsBtn" style="height:28px;padding:0 12px;background:#6b3fa0;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;white-space:nowrap;display:flex;align-items:center;gap:5px;flex-shrink:0"><i class="ti ti-file-plus" style="font-size:12px"></i>Add Documents</button>';
+  container.parentNode.insertBefore(note,container);
+}
+function simulateAddDocuments(){
+  var btn=document.getElementById('addDocsBtn');
+  if(btn){btn.disabled=true;btn.innerHTML='<i class="ti ti-loader-2" style="animation:spin .8s linear infinite;font-size:12px"></i> Adding\u2026';}
+  showBgToast('\u23f3 Add Documents running\u2026');
+  setTimeout(function(){
+    S.activeGapIds=[];S.edits={};S.activeCat=null;S.binderDirty=true;
+    var tEl=document.getElementById('bgToast'),tMsg=document.getElementById('bgToastMsg'),tIco=tEl?tEl.querySelector('i'):null;
+    if(tMsg)tMsg.textContent='\u2714 Documents added \u2014 re-export to confirm.';
+    if(tIco){tIco.style.animation='none';tIco.className='ti ti-circle-check';tIco.style.color='#5ee8a8';}
+    setTimeout(function(){
+      if(tEl)tEl.classList.remove('show');
+      var n=document.getElementById('modeResolutionNote');if(n)n.remove();
+      showBanner('\u2714 Documents added \u2014 re-export to push updated data.','success');
+      showReconState('idle');
+      var sub=document.getElementById('reconCtaSub');if(sub)sub.textContent='Documents added. Re-export required, then run reconciliation.';
+      setStatus('Add Documents complete. Re-export required.');
+    },2000);
+  },3000);
+}
+
+initPanes();
+openDoc('w2_whynot','WHYNOT STOP INC. \u2014 W-2 (2023)');
+resetExportModal();
+runScenario('SC1');
+setBinderMode('none');
+
+
+/* ═══ SPLIT BUTTON + TOAST ENGINE ═══ */
+function toggleReconDropdown(evt){
+  if(evt) evt.stopPropagation();
+  var dd=document.getElementById('reconDropdown');if(!dd) return;
+  if(dd.classList.toggle('open')) document.addEventListener('click',_closeReconDdOut,{once:true});
+}
+function _closeReconDdOut(e){
+  var dd=document.getElementById('reconDropdown'),w=document.getElementById('reconSplitWrap');
+  if(dd&&w&&!w.contains(e.target)) dd.classList.remove('open');
+}
+function closeReconDropdown(){var dd=document.getElementById('reconDropdown');if(dd) dd.classList.remove('open');}
+function reconSplitMainClick(){var m=document.getElementById('reconSplitMain');if(!m||m.classList.contains('disabled')) return;reconDdRun();}
+function reconDdRun(){
+  closeReconDropdown();
+  var item=document.getElementById('ddRunRecon');
+  if(!item||item.classList.contains('dd-disabled')) return;
+  if(S.reconRunning) return;
+  if(S.binderDirty){showExportPendingInfo();return;}
+  doRerun();
+}
+function reconDdView(){
+  closeReconDropdown();
+  var item=document.getElementById('ddViewResults');
+  if(!item||item.classList.contains('dd-disabled')) return;
+  window.open('https://sgokhale101.github.io/Data-Reconciliation-HTML-Report/','_blank','noopener');
+}
+function setReconMenuState(enabled){
+  var main=document.getElementById('reconSplitMain'),arr=document.getElementById('reconSplitArr');
+  var tip=document.getElementById('reconSplitTip'),ri=document.getElementById('ddRunRecon'),rs=document.getElementById('ddRunSub');
+  if(main) main.classList.toggle('disabled',!enabled);
+  if(arr) arr.classList.toggle('disabled',!enabled);
+  if(tip) tip.textContent=enabled?'Run or view reconciliation results':'Complete an export first to enable reconciliation';
+  if(ri) ri.classList.toggle('dd-disabled',!enabled||!!S.reconRunning||!!S.binderDirty);
+  if(rs) rs.textContent=!enabled?'Complete an export first':S.binderDirty?'Complete pending export first':S.reconRunning?'Reconciliation in progress…':'Re-run to compare with Tax Software';
+  updateViewResultsBtn();
+}
+function setReconRunning(running){
+  S.reconRunning=running;
+  var main=document.getElementById('reconSplitMain'),arr=document.getElementById('reconSplitArr');
+  var ri=document.getElementById('ddRunRecon'),rs=document.getElementById('ddRunSub');
+  var locked=running||!S.reconUnlocked;
+  if(main) main.classList.toggle('disabled',locked);
+  if(arr) arr.classList.toggle('disabled',locked);
+  if(ri) ri.classList.toggle('dd-disabled',locked||!!S.binderDirty);
+  if(rs) rs.textContent=running?'Reconciliation in progress…':S.binderDirty?'Complete pending export first':S.reconUnlocked?'Re-run to compare with Tax Software':'Complete an export first';
+}
+function updateViewResultsBtn(){
+  var item=document.getElementById('ddViewResults'),sub=document.getElementById('ddViewSub');
+  var has=!!S.lastRunTs;
+  var sc=SCENARIOS[S.scenario]||{};
+  var lastRunHadGaps=has&&sc.initialGaps&&sc.initialGaps.length>0&&!sc.forceError;
+  if(item) item.classList.toggle('dd-disabled',!lastRunHadGaps);
+  if(sub) sub.textContent=lastRunHadGaps?
+    'Opens last report in browser · '+formatTs(S.lastRunTs):
+    has?'No gaps found — no report to view':'No results yet — run reconciliation first';
+}
+var _spbT={},_spbN=0;
+function showSpbToast(opts){
+  var wrap=document.getElementById('spbToastWrap');if(!wrap) return;
+  var id=opts.id||('spbt-'+(++_spbN));
+  var old=document.getElementById(id);if(old){old.remove();clearTimeout(_spbT[id]);}
+  var icons={success:'ti-circle-check',warning:'ti-alert-triangle',error:'ti-alert-circle',running:'ti-loader spin',info:'ti-info-circle'};
+  var ic=icons[opts.type]||'ti-info-circle';
+  var ts=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  var el=document.createElement('div');
+  el.className='spb-toast type-'+(opts.type||'info');el.id=id;
+  var linkH=opts.linkText&&opts.linkHref?'<a class="spb-toast-link" href="'+opts.linkHref+'" target="_blank" rel="noopener"><i class="ti ti-external-link" style="font-size:11px"></i> '+opts.linkText+'</a>':'';
+  var msgH=opts.msg?'<div class="spb-toast-msg">'+opts.msg+'</div>':'';
+  el.innerHTML='<div class="spb-toast-top"><div class="spb-toast-accent"></div><div class="spb-toast-icon"><i class="ti '+ic+'"></i></div><div class="spb-toast-body"><div class="spb-toast-title">'+opts.title+'</div>'+msgH+linkH+'<div class="spb-toast-ts">'+ts+'</div></div><button class="spb-toast-close" title="Dismiss">&#x2715;</button></div>';
+  el.querySelector('.spb-toast-close').onclick=function(){dismissSpbToast(id);};
+  wrap.appendChild(el);
+  requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.add('show');});});
+  var dur=opts.duration===undefined?6000:opts.duration;
+  if(dur>0) _spbT[id]=setTimeout(function(){dismissSpbToast(id);},dur);
+  return id;
+}
+function dismissSpbToast(id){
+  var el=document.getElementById(id);if(!el) return;
+  el.classList.remove('show');clearTimeout(_spbT[id]);
+  setTimeout(function(){if(el.parentNode) el.parentNode.removeChild(el);},350);
+}
+function showBgToast(msg){showSpbToast({type:'running',title:'Reconciliation Running',msg:msg,duration:0,id:'bg-recon-toast'});}
+function hideBgToast(){dismissSpbToast('bg-recon-toast');}
+
+
+
+
+
+/* ═══ SHARED RESULT HELPERS ═══ */
+function _showReconResult(hasGaps){
+  if(hasGaps){
+    var cnt=S.activeGapIds.length;
+    showSpbToast({type:'warning',title:'Reconciliation Complete',
+      msg:cnt+' gap'+(cnt===1?'':'s')+' found between SPbinder and Tax Software.',
+      linkText:'View Reconciliation Report',
+      linkHref:'https://sgokhale101.github.io/Data-Reconciliation-HTML-Report/',
+      duration:0,id:'recon-result-toast'});
+    setStatus('Reconciliation complete — '+cnt+' gap'+(cnt===1?'':'s')+' found.');
+  } else {
+    showSpbToast({type:'success',title:'Reconciliation Complete',
+      msg:'All fields match. No gaps found.',duration:8000,id:'recon-result-toast'});
+    setStatus('Reconciliation complete — all fields match.');
+  }
+}
+function _showReconError(){
+  var toastId='recon-err-toast';
+  var wrap=document.getElementById('spbToastWrap');if(!wrap)return;
+  var old=document.getElementById(toastId);if(old){old.remove();}
+  var el=document.createElement('div');
+  el.className='spb-toast type-error';el.id=toastId;
+  var ts=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  el.innerHTML=
+    '<div class="spb-toast-top">'+
+      '<div class="spb-toast-accent"></div>'+
+      '<div class="spb-toast-icon"><i class="ti ti-alert-circle"></i></div>'+
+      '<div class="spb-toast-body">'+
+        '<div class="spb-toast-title">Reconciliation Failed</div>'+
+        '<div class="spb-toast-msg">An error occurred during reconciliation. Please retry.</div>'+
+        '<div class="spb-toast-ts">'+ts+'</div>'+
+      '</div>'+
+      '<button class="spb-toast-close" title="Dismiss">&#x2715;</button>'+
+    '</div>'+
+    '<div style="padding:8px 14px 10px;">'+
+      '<button class="spb-retry-btn" id="reconRetryBtn">'+
+        '<i class="ti ti-refresh" style="font-size:12px"></i> Retry Reconciliation'+
+      '</button>'+
+    '</div>';
+  el.querySelector('.spb-toast-close').onclick=function(){dismissSpbToast(toastId);};
+  el.querySelector('.spb-retry-btn').onclick=function(){
+    dismissSpbToast(toastId);
+    if(S.reconUnlocked&&!S.reconRunning&&!S.binderDirty) doRerun();
+  };
+  wrap.appendChild(el);
+  requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.add('show');});});
+  setStatus('Reconciliation failed. Click Retry in the notification to try again.');
+}
+/* ═══ EXPORT PENDING INFO POPUP ═══ */
+function showExportPendingInfo(){
+  var body=document.getElementById('rerunModalBody');
+  var ftr=document.getElementById('rerunModalFtr');
+  if(!body||!ftr){return;}
+  body.innerHTML=
+    '<div style="display:flex;align-items:flex-start;gap:12px">'+
+    '<i class="ti ti-info-circle" style="font-size:28px;color:#1e7fd4;flex-shrink:0;margin-top:2px"></i>'+
+    '<div>'+
+      '<div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:6px">Export Required Before Reconciliation</div>'+
+      '<div style="font-size:12px;color:var(--txt2);line-height:1.6">'+
+        'The binder has pending changes that have not been exported to GoSystem Tax RS.<br><br>'+
+        'Reconciliation compares SPbinder data with the latest Tax Software data. '+
+        'Please complete the export first to ensure accurate results.'+
+      '</div>'+
+    '</div></div>';
+  ftr.innerHTML='<button class="mbtn primary" onclick="closeModal(&quot;rerunModal&quot;)">OK</button>';
+  openModal('rerunModal');
+}
+
+</script>
+</body>
+</html>
